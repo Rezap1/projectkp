@@ -13,41 +13,52 @@ use Illuminate\Support\Facades\DB;
 class QuizController extends Controller
 {
     public function index()
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        // Menyiapkan list kuis dengan fitur Timer & Satu Kali Kerjakan
-        $listKuis = Category::all()->map(function ($kuis) use ($user) {
+    // 1. Ambil Kategori yang HANYA memiliki soal
+    $listKuis = Category::whereHas('questions')
+        ->where(function($query) {
+            // Tampilkan jika: Dibuat dalam 3 hari terakhir OR tanggalnya kosong (NULL)
+            $query->where('created_at', '>=', \Carbon\Carbon::now()->subDays(1 ))
+                  ->orWhereNull('created_at');
+        })
+        ->get()
+        ->map(function ($kuis) use ($user) {
             // Cek apakah sudah pernah dikerjakan
             $kuis->is_done = Result::where('user_id', $user->id)
                                 ->where('category_id', $kuis->id)
                                 ->exists();
 
-            // Cek apakah sudah lewat 3 hari (Timer)
-            $tanggalTerbit = Carbon::parse($kuis->created_at);
-            $kuis->is_expired = Carbon::now()->diffInDays($tanggalTerbit) >= 3;
+            // Logika expired untuk tampilan di Blade (jika diperlukan)
+            // Jika NULL, kita anggap tidak expired agar kuis tetap muncul
+            if (is_null($kuis->created_at)) {
+                $kuis->is_expired = false;
+            } else {
+                $kuis->is_expired = \Carbon\Carbon::parse($kuis->created_at)->diffInDays(\Carbon\Carbon::now()) >= 3;
+            }
 
             return $kuis;
         });
 
-        // Menghitung Statistik
-        $userResults = Result::where('user_id', $user->id)->get();
-        $rataRata = $userResults->avg('skor') ?? 0;
-        $skorTertinggi = $userResults->max('skor') ?? 0;
+    // --- Statistik ---
+    $userResults = Result::where('user_id', $user->id)->get();
+    $rataRata = $userResults->avg('skor') ?? 0;
+    $skorTertinggi = $userResults->max('skor') ?? 0;
 
-        // --- SOLUSI ERROR image_45d0e6.jpg (Menghitung Peringkat) ---
-        $peringkatRaw = Result::select('user_id', DB::raw('SUM(skor) as total_skor'))
-            ->groupBy('user_id')
-            ->orderByDesc('total_skor')
-            ->get()
-            ->pluck('user_id')
-            ->search($user->id);
+    // --- Menghitung Peringkat ---
+    // Menggunakan SUM(skor) agar peringkat berdasarkan total poin seluruh kuis
+    $peringkatRaw = Result::select('user_id', \Illuminate\Support\Facades\DB::raw('SUM(skor) as total_skor'))
+        ->groupBy('user_id')
+        ->orderByDesc('total_skor')
+        ->get()
+        ->pluck('user_id')
+        ->search($user->id);
 
-        $peringkat = ($peringkatRaw !== false) ? $peringkatRaw + 1 : '-';
+    $peringkat = ($peringkatRaw !== false) ? $peringkatRaw + 1 : '-';
 
-        // Kirim semua variabel yang diminta oleh dashboard.blade.php
-        return view('siswa.dashboard', compact('listKuis', 'rataRata', 'skorTertinggi', 'peringkat'));
-    }
+    return view('siswa.dashboard', compact('listKuis', 'rataRata', 'skorTertinggi', 'peringkat'));
+}
 
 
 
@@ -103,4 +114,19 @@ class QuizController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Kuis Selesai! Skor Anda: ' . number_format($skor, 0));
     }
+
+    public function dashboard()
+{
+    $user = auth()->user();
+    // ... (logika listKuis dan rataRata)
+
+    // Logika hitung peringkat sederhana
+    $peringkat = Result::orderBy('skor', 'desc')
+        ->pluck('user_id')
+        ->unique()
+        ->values()
+        ->search($user->id) + 1;
+
+    return view('siswa.dashboard', compact('listKuis', 'rataRata', 'skorTertinggi', 'peringkat'));
+}
 }

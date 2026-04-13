@@ -28,7 +28,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <div class="relative overflow-hidden bg-indigo-600 p-10 rounded-[3rem] shadow-sm border border-slate-100 group hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-500">
             <div class="relative">
-                <p class="text-white font-black text-xs uppercase tracking-[0.2em] mb-4">Siswa Aktif</p>
+                <p class="text-white font-black text-xs uppercase tracking-[0.2em] mb-4">Siswa Mengerjakan</p>
                 <div class="flex items-baseline gap-3">
                     <h3 class="text-6xl font-black text-slate-900 leading-none">{{ $totalSiswa }}</h3>
                     <span class="text-white font-bold">Orang</span>
@@ -38,7 +38,7 @@
 
         <div class="relative overflow-hidden bg-blue-600 p-10 rounded-[3rem] shadow-sm border border-slate-100 group hover:shadow-2xl hover:shadow-blue-100 transition-all duration-500">
             <div class="relative">
-                <p class="text-white font-black text-xs uppercase tracking-[0.2em] mb-4">Bank Soal</p>
+                <p class="text-white font-black text-xs uppercase tracking-[0.2em] mb-4">Soal Dimiliki</p>
                 <div class="flex items-baseline gap-3">
                     <h3 class="text-6xl font-black text-slate-900 leading-none">{{ $totalSoal }}</h3>
                     <span class="text-white font-bold">Materi</span>

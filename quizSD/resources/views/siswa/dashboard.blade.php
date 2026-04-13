@@ -10,6 +10,11 @@
                         {{ session('success') }}
                     </div>
                 @endif
+                @if(session('error'))
+                    <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-2xl font-bold text-center">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 <h1 class="text-4xl font-black text-slate-900 tracking-tight">Halo, {{ Auth::user()->name }}! 👋</h1>
                 <p class="text-slate-500 font-medium mt-2 text-lg">Siap untuk menguji kemampuanmu hari ini?</p>
             </div>
@@ -40,7 +45,18 @@
                                     <p class="text-sm text-slate-500">Mata Pelajaran</p>
                                 </div>
                             </div>
-                            <a href="{{ route('kuis.show', $kuis->id) }}" class="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">Mulai</a>
+
+                            {{-- LOGIKA TOMBOL: Cek apakah sudah dikerjakan --}}
+                            @if($kuis->is_done)
+                                <div class="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-6 py-3 rounded-2xl font-bold text-sm border border-emerald-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Selesai
+                                </div>
+                            @else
+                                <a href="{{ route('kuis.show', $kuis->id) }}" class="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">Mulai</a>
+                            @endif
                         </div>
                     @empty
                         <div class="text-center py-10">

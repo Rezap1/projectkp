@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
     if (Auth::user()->role === 'guru') {
         return redirect()->route('admin.dashboard');
     }
-    // Arahkan ke rute siswa.dashboard agar variabel terisi
+    // Arah rute siswa
     return redirect()->route('siswa.dashboard');
 })->middleware(['auth'])->name('dashboard');
 

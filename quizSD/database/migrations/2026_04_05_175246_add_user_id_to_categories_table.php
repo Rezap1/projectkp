@@ -9,10 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
 {
     Schema::table('categories', function (Blueprint $table) {
-        $table->timestamps(); // Ini akan menambah created_at dan updated_at
+        $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
     });
 }
 
