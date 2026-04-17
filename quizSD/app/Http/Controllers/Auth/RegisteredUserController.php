@@ -29,33 +29,32 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+   public function store(Request $request): RedirectResponse
 {
     $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'role' => ['required', 'string', 'in:siswa,guru'], // Tambahkan validasi role
+        'kelas' => ['required', 'integer', 'in:4,5,6'], // Validasi input kelas
     ]);
 
     $user = User::create([
-    'name' => $request->name,
-    'email' => $request->email,
-    'password' => Hash::make($request->password),
-    'role' => $request->role, // Tambahkan baris ini
-]);
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $request->role, // Paksa role jadi siswa saat daftar
+        'kelas' => ($request->role === 'guru') ? null : $request->kelas, // Simpan pilihan kelas
+    ]);
 
     event(new Registered($user));
 
     Auth::login($user);
 
-    // Redirect otomatis berdasarkan role setelah daftar
+    // Redirect otomatis berdasarkan role
     if ($user->role === 'guru') {
         return redirect()->route('admin.dashboard');
     }
 
-    return redirect('/dashboard');
-// Atau arahkan ke rute spesifik siswa Anda
     return redirect()->route('siswa.dashboard');
-    }
+}
 }

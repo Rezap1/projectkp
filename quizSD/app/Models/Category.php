@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['nama_kategori', 'slug'];
+    protected $fillable = ['nama_kategori', 'slug', 'kelas', 'user_id'];
 
     // TAMBAHKAN BARIS INI:
     public function questions(): HasMany

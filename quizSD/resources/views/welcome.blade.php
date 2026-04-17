@@ -25,7 +25,7 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center gap-5 pt-5 justify-center md:justify-start">
-                <a href="{{ route('register') }}" class="group bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg shadow-2xl shadow-indigo-200 transition-all hover:-translate-y-2 flex items-center gap-3 active:scale-95">
+                <a href="{{ route('login') }}" class="group bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg shadow-2xl shadow-indigo-200 transition-all hover:-translate-y-2 flex items-center gap-3 active:scale-95">
                     <span>Mulai Belajar Sekarang</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />

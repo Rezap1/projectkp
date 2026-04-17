@@ -49,6 +49,16 @@
                     placeholder="••••••••" required>
             </div>
 
+            <div class="mt-4">
+                <label for="kelas" class="block font-medium text-sm text-gray-700">Pilih Kelas</label>
+                    <select name="kelas" id="kelas" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="4">Kelas 4</option>
+                        <option value="5">Kelas 5</option>
+                        <option value="6">Kelas 6</option>
+                    </select>
+            </div>
+
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-1 active:scale-95">
                 Buat Akun Sekarang
             </button>

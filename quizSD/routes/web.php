@@ -13,17 +13,21 @@ Route::get('/dashboard', function () {
     if (Auth::user()->role === 'guru') {
         return redirect()->route('admin.dashboard');
     }
-    // Arah rute siswa
     return redirect()->route('siswa.dashboard');
 })->middleware(['auth'])->name('dashboard');
 
 // AREA SISWA
 Route::middleware(['auth', 'checkRole:siswa'])->group(function () {
-
     Route::get('/siswa/dashboard', [QuizController::class, 'index'])->name('siswa.dashboard');
 
+    // Route Mulai Kuis
     Route::get('/kuis/mulai/{id}', [QuizController::class, 'show'])->name('kuis.show');
-    Route::post('/kuis/submit', [QuizController::class, 'submit'])->name('kuis.submit');
+
+    // PERBAIKAN: Tambahkan parameter {category_id} agar sinkron dengan Controller submit
+    Route::post('/kuis/submit/{category_id}', [QuizController::class, 'submit'])->name('kuis.submit');
+
+    // PERBAIKAN: Pindahkan Review ke dalam Middleware Siswa agar aman
+    Route::get('/kuis/review/siswa/{category_id}', [QuizController::class, 'review'])->name('kuis.review');
 });
 
 // AREA GURU
@@ -31,5 +35,7 @@ Route::middleware(['auth', 'checkRole:guru'])->prefix('admin')->group(function (
     Route::get('/dashboard', [QuestionController::class, 'dashboard'])->name('admin.dashboard');
     Route::resource('questions', QuestionController::class);
 });
+
+Route::get('/quiz/start/{id}', [QuizController::class, 'startQuiz'])->name('quiz.start');
 
 require __DIR__.'/auth.php';

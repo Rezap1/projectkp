@@ -38,10 +38,14 @@
                 @enderror
             </div>
 
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-1 active:scale-95">
+                Masuk Sekarang →
+            </button>
+
             <div class="flex items-center justify-between">
                 <label for="remember_me" class="inline-flex items-center">
                     <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                    <span class="ms-2 text-sm font-bold text-slate-600">Ingat saya</span>
+                    <span class="ms-2 text-sm font-bold text-slate-600">Ingatkan saya</span>
                 </label>
                 @if (Route::has('password.request'))
                     <a class="text-sm font-bold text-indigo-600 hover:text-indigo-500 underline" href="{{ route('password.request') }}">
@@ -50,14 +54,7 @@
                 @endif
             </div>
 
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-1 active:scale-95">
-                Masuk Sekarang →
-            </button>
         </form>
-
-        <p class="mt-8 text-center text-sm font-bold text-slate-400">
-            Belum punya akun? <a href="{{ route('register') }}" class="text-indigo-600 hover:underline">Daftar di sini</a>
-        </p>
     </div>
 </div>
 @endsection
