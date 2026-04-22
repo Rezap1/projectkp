@@ -5,19 +5,22 @@
     <div class="max-w-7xl mx-auto">
         {{-- Header Section --}}
         <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
+            <div class="flex flex-col gap-2">
                 @if(session('success'))
                     <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-2xl font-bold text-center animate-bounce">
                         {{ session('success') }}
                     </div>
                 @endif
-                @if(session('error'))
-                    <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-2xl font-bold text-center">
-                        {{ session('error') }}
-                    </div>
-                @endif
-                <h1 class="text-4xl font-black text-slate-900 tracking-tight">Halo, {{ Auth::user()->name }}! 👋</h1>
-                <p class="text-slate-500 font-medium mt-2 text-lg">Siap untuk menguji kemampuanmu hari ini?</p>
+
+                {{-- Bagian Nama & Rank (DI-PERBESAR) --}}
+                <div class="flex flex-wrap items-center gap-4">
+                    <h1 class="text-4xl font-black text-slate-900 tracking-tight">Halo, {{ Auth::user()->name }}!</h1>
+                    {{-- Badge Rank yang Diperbesar dengan Gradasi --}}
+                    <span class="{{ $badgeColor }} text-indigo-600 text-xl font-black px-8 py-3 rounded-2xl uppercase tracking-widest shadow-2xl animate-bounce border-2 border-white/30 transform hover:scale-110 transition-all">
+                        {{ $badge }}
+                    </span>
+                </div>
+                <p class="text-slate-500 font-medium mt-2 text-lg">Siap untuk petualangan belajar hari ini?</p>
             </div>
 
             {{-- Skor Tertinggi Badge --}}
@@ -37,7 +40,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {{-- Main Content: List Kuis --}}
             <div class="md:col-span-2 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                <h3 class="text-xl font-black text-slate-900 mb-6 border-b border-slate-50 pb-4">Kuis Hari Ini 📝</h3>
+                <h3 class="text-xl font-black text-slate-900 mb-6 border-b border-slate-50 pb-4">Misi Hari Ini 📝</h3>
                 <div class="space-y-4">
                     @forelse($listKuis as $kuis)
                         <div class="group flex items-center justify-between p-5 rounded-3xl bg-slate-50 hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all">
@@ -50,25 +53,29 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-800 text-lg">{{ $kuis->nama_kategori }}</h4>
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Mata Pelajaran</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Kelas {{ Auth::user()->kelas }}</span>
+                                        @if($kuis->is_done)
+                                            <span class="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Selesai</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
-                            {{-- Logika Tombol Selesai / Mulai --}}
                             <div class="flex flex-col items-end gap-2">
                                 @if($kuis->is_done)
-                                    <div class="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-6 py-2 rounded-2xl font-bold text-xs border border-emerald-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
-                                        Selesai
-                                    </div>
-                                    <a href="{{ route('kuis.review', $kuis->id) }}" class="text-indigo-600 text-xs font-black hover:underline tracking-tight">
+                                    @php
+                                        $sisaMenit = 5 - \Carbon\Carbon::parse($kuis->last_result_time)->diffInMinutes(now());
+                                    @endphp
+                                    <span class="text-[10px] text-amber-600 font-bold bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
+                                        ⏳ Hasil hilang dlm {{ max($sisaMenit, 0) }} mnt
+                                    </span>
+                                    <a href="{{ route('kuis.review', $kuis->id) }}" class="inline-flex items-center gap-2 bg-white border-2 border-indigo-600 text-indigo-600 px-6 py-2 rounded-2xl font-black text-xs hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
                                         LIHAT HASIL →
                                     </a>
                                 @else
                                     <a href="{{ route('kuis.show', $kuis->id) }}" class="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
-                                        Mulai
+                                        Mulai Misi
                                     </a>
                                 @endif
                             </div>
@@ -76,7 +83,7 @@
                     @empty
                         <div class="text-center py-16">
                             <div class="text-6xl mb-4">📭</div>
-                            <h4 class="text-slate-800 font-black text-xl">Belum ada kuis!</h4>
+                            <h4 class="text-slate-800 font-black text-xl">Misi hari ini sudah selesai!</h4>
                             <p class="text-slate-400 font-medium">Kuis baru akan muncul setiap hari. Semangat!</p>
                         </div>
                     @endforelse
@@ -86,14 +93,8 @@
             {{-- Sidebar: Statistik --}}
             <div class="space-y-8">
                 <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
-                    {{-- Dekorasi Latar Belakang --}}
-                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
-
                     <h3 class="text-lg font-bold mb-6 text-indigo-400 relative z-10 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-                        </svg>
-                        Statistik Kamu
+                        Papan Skor 📊
                     </h3>
 
                     <div class="space-y-6 relative z-10">
@@ -107,13 +108,28 @@
                                 <p class="text-2xl font-bold text-yellow-400">#{{ $peringkat }}</p>
                             </div>
                         </div>
+
+                        {{-- Progress Level (BATAS 5000) --}}
+                        <div class="mt-2 bg-white/5 p-4 rounded-3xl border border-white/10">
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-[10px] text-indigo-300 font-black uppercase tracking-tight">Menuju Mythical Glory</p>
+                                <p class="text-[10px] text-white font-bold">{{ $totalSkorSiswa }} / 5000</p>
+                            </div>
+                            <div class="w-full bg-white/20 h-3 rounded-full overflow-hidden">
+                                {{-- Progress bar dihitung dari 5000 --}}
+                                <div class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full transition-all duration-1000 shadow-[0_0_15px_rgba(251,191,36,0.5)]"
+                                     style="width: {{ min(($totalSkorSiswa / 5000) * 100, 100) }}%">
+                                </div>
+                            </div>
+                            <p class="text-[9px] text-slate-400 mt-2 italic text-center">Butuh {{ max(5000 - $totalSkorSiswa, 0) }} poin lagi untuk menuju Puncak!</p>
+                        </div>
                     </div>
                 </div>
 
                 {{-- Info Sekolah --}}
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 text-center shadow-sm">
                     <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner animate-pulse">🏛️</div>
-                    <h4 class="font-black text-slate-800 tracking-tight text-lg">SDN CIBINONG 2</h4>
+                    <h4 class="font-black text-slate-800 tracking-tight text-lg uppercase">SDN CIBINONG 2</h4>
                     <p class="text-sm text-slate-400 mt-2 font-medium italic leading-relaxed">
                         "Giat Belajar,<br>Raih Prestasi!"
                     </p>

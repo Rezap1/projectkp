@@ -12,46 +12,76 @@ use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
-   public function index()
+    public function index()
 {
     $user = auth()->user();
+    $now = now();
+    $currentMonth = now()->month;
+    $currentYear = now()->year;
 
-    // Opsional: Hapus hasil yang sudah lebih dari 7 hari (sesuai kode lama Anda)
-    \App\Models\Result::where('created_at', '<', now()->subDays(7))->delete();
-
-    // 1. Ambil Kategori yang HANYA memiliki soal DAN sesuai KELAS siswa
+    // 1. Ambil Kuis sesuai KELAS siswa
     $listKuis = Category::whereHas('questions')
-        ->where('kelas', $user->kelas) // <--- FILTER KELAS DISINI
-        ->where(function($query) {
-            // Tampilkan jika: Dibuat dalam 1 hari terakhir ATAU tanggalnya kosong (NULL)
-            $query->where('created_at', '>=', now()->subDays(1))
-                  ->orWhereNull('created_at');
-        })
+        ->where('kelas', $user->kelas)
+        ->latest()
         ->get()
-        ->map(function ($kuis) use ($user) {
-            // Cek apakah sudah pernah dikerjakan
-            $kuis->is_done = Result::where('user_id', $user->id)
+        ->map(function ($kuis) use ($user, $now) {
+            $lastResult = Result::where('user_id', $user->id)
                                 ->where('category_id', $kuis->id)
-                                ->exists();
+                                ->latest()
+                                ->first();
 
-            // Logika expired untuk tampilan di Blade
-            if (is_null($kuis->created_at)) {
-                $kuis->is_expired = false;
-            } else {
-                // Sesuai filter query di atas, kuis dianggap expired jika lewat 1 hari
-                $kuis->is_expired = \Carbon\Carbon::parse($kuis->created_at)->diffInDays(\Carbon\Carbon::now()) >= 1;
+            $kuis->is_done = $lastResult ? true : false;
+            $kuis->should_hide = false;
+
+            // LOGIKA SEMBUNYI 5 MENIT:
+            if ($lastResult) {
+                $menitLalu = \Carbon\Carbon::parse($lastResult->created_at)->diffInMinutes($now);
+                if ($menitLalu >= 5) {
+                    $kuis->should_hide = true;
+                }
+                $kuis->last_result_time = $lastResult->created_at;
             }
 
             return $kuis;
+        })
+        ->filter(function ($kuis) {
+            return $kuis->should_hide === false;
         });
 
-    // --- Statistik ---
-    $userResults = Result::where('user_id', $user->id)->get();
+    // 2. Statistik & Badge (DIBUAT RESET BULANAN)
+    $userResults = Result::where('user_id', $user->id)
+        ->whereMonth('created_at', $currentMonth) // Hanya hitung skor bulan ini
+        ->whereYear('created_at', $currentYear)
+        ->get();
+
     $rataRata = $userResults->avg('skor') ?? 0;
     $skorTertinggi = $userResults->max('skor') ?? 0;
+    $totalSkorSiswa = $userResults->sum('skor');
 
-    // --- Menghitung Peringkat ---
-    $peringkatRaw = Result::select('user_id', \Illuminate\Support\Facades\DB::raw('SUM(skor) as total_skor'))
+    // Penentuan Tier berdasarkan skor BULAN INI
+    if ($totalSkorSiswa >= 1700) {
+        $badge = 'Mythical Glory 🎖️';
+        $badgeColor = 'bg-gradient-to-r from-purple-600 to-red-600';
+    } elseif ($totalSkorSiswa >= 1200) {
+        $badge = 'Mythic 🌟';
+        $badgeColor = 'bg-gradient-to-r from-blue-500 to-purple-500';
+    } elseif ($totalSkorSiswa >= 700) {
+        $badge = 'Legend 🛡️';
+        $badgeColor = 'bg-gradient-to-r from-yellow-500 to-orange-500';
+    } elseif ($totalSkorSiswa >= 300) {
+        $badge = 'Epic ⚔️';
+        $badgeColor = 'bg-gradient-to-r from-green-500 to-teal-500';
+    } else {
+        $badge = 'Warrior 🍃';
+        $badgeColor = 'bg-slate-400';
+    }
+
+    $targetSkor = 5000;
+
+    // 3. Menghitung Peringkat (DIBUAT RESET BULANAN)
+    $peringkatRaw = Result::select('user_id', \DB::raw('SUM(skor) as total_skor'))
+        ->whereMonth('created_at', $currentMonth) // Peringkat hanya berdasarkan skor bulan ini
+        ->whereYear('created_at', $currentYear)
         ->groupBy('user_id')
         ->orderByDesc('total_skor')
         ->get()
@@ -60,119 +90,84 @@ class QuizController extends Controller
 
     $peringkat = ($peringkatRaw !== false) ? $peringkatRaw + 1 : '-';
 
-    return view('siswa.dashboard', compact('listKuis', 'rataRata', 'skorTertinggi', 'peringkat'));
+    return view('siswa.dashboard', compact(
+        'listKuis', 'rataRata', 'skorTertinggi', 'peringkat',
+        'badge', 'badgeColor', 'totalSkorSiswa', 'targetSkor'
+    ));
 }
-
-
-
 
     public function show($id)
-{
-    $user = auth()->user();
-    $category = \App\Models\Category::findOrFail($id);
+    {
+        $user = auth()->user();
+        $category = Category::findOrFail($id);
 
-    // LOGIKA KEAMANAN BARU
-    $sudahDikerjakan = \App\Models\Result::where('user_id', $user->id)
-                        ->where('category_id', $id)
-                        ->exists();
+        $lastResult = Result::where('user_id', $user->id)
+                            ->where('category_id', $id)
+                            ->latest()
+                            ->first();
 
-    $isExpired = \Carbon\Carbon::now()->diffInDays($category->created_at) >= 3;
-
-    if ($sudahDikerjakan || $isExpired) {
-        return redirect()->route('siswa.dashboard')->with('error', 'Kuis tidak tersedia.');
-    }
-    // AKHIR LOGIKA KEAMANAN
-
-    $questions = \App\Models\Question::where('category_id', $id)->get();
-    return view('siswa.show', compact('category', 'questions'));
-}
-
-    public function submit(Request $request, $category_id) // Tambahkan $category_id di sini agar sinkron dengan Route
-{
-    $jawabanUser = $request->input('jawaban');
-
-    $questions = Question::where('category_id', $category_id)->get();
-    $totalSoal = $questions->count();
-    $jawabanBenarCounter = 0;
-
-    if ($jawabanUser) {
-        foreach ($questions as $soal) {
-            $pilihanSiswa = $jawabanUser[$soal->id] ?? null;
-
-            // 1. SIMPAN DETAIL JAWABAN KE TABEL user_answers (PENTING UNTUK REVIEW)
-            \App\Models\UserAnswer::create([
-                'user_id'       => auth()->id(),
-                'category_id'   => $category_id,
-                'question_id'   => $soal->id,
-                'jawaban_siswa' => $pilihanSiswa,
-            ]);
-
-            // 2. CEK JAWABAN BENAR
-            if ($pilihanSiswa == $soal->jawaban_benar) {
-                $jawabanBenarCounter++;
+        if ($lastResult) {
+            $menitLalu = Carbon::parse($lastResult->created_at)->diffInMinutes(now());
+            if ($menitLalu >= 5) {
+                return redirect()->route('siswa.dashboard')->with('error', 'Waktu akses kuis ini sudah habis.');
             }
         }
+
+        $questions = Question::where('category_id', $id)->get();
+        return view('siswa.show', compact('category', 'questions'));
     }
 
-    $jawabanSalahCounter = $totalSoal - $jawabanBenarCounter;
-    $skor = ($totalSoal > 0) ? ($jawabanBenarCounter / $totalSoal) * 100 : 0;
+    public function submit(Request $request, $category_id)
+    {
+        $jawabanUser = $request->input('jawaban');
+        $questions = Question::where('category_id', $category_id)->get();
+        $totalSoal = $questions->count();
+        $jawabanBenarCounter = 0;
 
-    // 3. SIMPAN HASIL AKHIR
-    Result::create([
-        'user_id'     => auth()->id(),
-        'category_id' => $category_id,
-        'skor'        => $skor,
-        'benar'       => $jawabanBenarCounter,
-        'salah'       => $jawabanSalahCounter,
-        'created_at'  => now(),
-        'updated_at'  => now(), // Pastikan nama kolomnya benar 'updated_at'
-    ]);
+        if ($jawabanUser) {
+            foreach ($questions as $soal) {
+                $pilihanSiswa = $jawabanUser[$soal->id] ?? null;
 
-    return redirect()->route('siswa.dashboard')->with('success', 'Kuis berhasil dikerjakan!');
-}
+                \App\Models\UserAnswer::create([
+                    'user_id'       => auth()->id(),
+                    'category_id'   => $category_id,
+                    'question_id'   => $soal->id,
+                    'jawaban_siswa' => $pilihanSiswa,
+                ]);
 
-    public function dashboard()
-{
-    $user = auth()->user();
-    // ... (logika listKuis dan rataRata)
+                if ($pilihanSiswa == $soal->jawaban_benar) {
+                    $jawabanBenarCounter++;
+                }
+            }
+        }
 
-    // Logika hitung peringkat sederhana
-    $peringkat = Result::orderBy('skor', 'desc')
-        ->pluck('user_id')
-        ->unique()
-        ->values()
-        ->search($user->id) + 1;
+        $jawabanSalahCounter = $totalSoal - $jawabanBenarCounter;
+        $skor = ($totalSoal > 0) ? ($jawabanBenarCounter / $totalSoal) * 100 : 0;
 
-    return view('siswa.dashboard', compact('listKuis', 'rataRata', 'skorTertinggi', 'peringkat'));
-}
+        Result::create([
+            'user_id'     => auth()->id(),
+            'category_id' => $category_id,
+            'skor'        => $skor,
+            'benar'       => $jawabanBenarCounter,
+            'salah'       => $jawabanSalahCounter,
+        ]);
 
-public function review($category_id)
-{
-    $user = auth()->user();
+        return redirect()->route('siswa.dashboard')->with('success', 'Kuis berhasil dikerjakan! Kamu punya 5 menit untuk melihat hasilnya.');
+    }
 
-    // Ambil hasil skor
-    $result = \App\Models\Result::where('user_id', $user->id)
-                    ->where('category_id', $category_id)
-                    ->firstOrFail();
+    public function review($category_id)
+    {
+        $user = auth()->user();
+        $result = Result::where('user_id', $user->id)->where('category_id', $category_id)->firstOrFail();
 
-    // Ambil semua soal (urutkan agar konsisten)
-    $category = \App\Models\Category::with(['questions' => function($query) {
-        $query->orderBy('id', 'asc');
-    }])->findOrFail($category_id);
+        $category = Category::with(['questions' => function($query) {
+            $query->orderBy('id', 'asc');
+        }])->findOrFail($category_id);
 
-    // Ambil jawaban yang pernah diinput siswa [id_soal => jawaban_siswa]
-    $jawabanSiswa = \App\Models\UserAnswer::where('user_id', $user->id)
-                    ->where('category_id', $category_id)
-                    ->pluck('jawaban_siswa', 'question_id');
+        $jawabanSiswa = \App\Models\UserAnswer::where('user_id', $user->id)
+                        ->where('category_id', $category_id)
+                        ->pluck('jawaban_siswa', 'question_id');
 
-    return view('siswa.review', compact('category', 'result', 'jawabanSiswa'));
-}
-
-public function startQuiz($id) {
-    $category = Category::findOrFail($id);
-    $questions = Question::where('category_id', $id)->get();
-
-    return view('siswa.show', compact('category', 'questions'));
-}
-
+        return view('siswa.review', compact('category', 'result', 'jawabanSiswa'));
+    }
 }
