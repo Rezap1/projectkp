@@ -99,31 +99,38 @@ class QuestionController extends Controller
     // Proses Simpan ke Database
     public function store(Request $request)
     {
+        // Validasi Dasar
         $request->validate([
             'category_id' => 'required|exists:categories,id',
+            'questions' => 'required|array',
         ]);
 
         $questionsData = $request->input('questions');
         $count = 0;
 
-        if ($questionsData && is_array($questionsData)) {
-            foreach ($questionsData as $data) {
-                // Hanya simpan jika baris pertanyaan tidak kosong
-                if (!empty($data['pertanyaan'])) {
-                    Question::create([
-                        'category_id'   => $request->category_id,
-                        'pertanyaan'    => $data['pertanyaan'],
-                        'opsi_a'        => $data['opsi_a'] ?? '-',
-                        'opsi_b'        => $data['opsi_b'] ?? '-',
-                        'opsi_c'        => $data['opsi_c'] ?? '-',
-                        'opsi_d'        => $data['opsi_d'] ?? '-',
-                        // Gunakan ?? null agar tidak error Undefined Array Key
-                        'jawaban_benar' => $data['jawaban_benar'] ?? null,
-                        'created_at'    => now(),
-                        'updated_at'    => now(),
-                    ]);
-                    $count++;
+        foreach ($questionsData as $index => $data) {
+            // Logika: Hanya proses jika "Pertanyaan" diisi
+            if (!empty($data['pertanyaan'])) {
+
+                // Jika pertanyaan ada, maka Kunci Jawaban WAJIB dipilih
+                if (empty($data['jawaban_benar'])) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('error', 'Gagal! Kunci jawaban nomor ' . $index . ' belum dipilih.');
                 }
+
+                Question::create([
+                    'category_id'   => $request->category_id,
+                    'pertanyaan'    => $data['pertanyaan'],
+                    'opsi_a'        => $data['opsi_a'] ?? '-',
+                    'opsi_b'        => $data['opsi_b'] ?? '-',
+                    'opsi_c'        => $data['opsi_c'] ?? '-',
+                    'opsi_d'        => $data['opsi_d'] ?? '-',
+                    'jawaban_benar' => $data['jawaban_benar'],
+                    'created_at'    => now(),
+                    'updated_at'    => now(),
+                ]);
+                $count++;
             }
         }
 
@@ -142,7 +149,7 @@ class QuestionController extends Controller
         ]);
 
         Category::create([
-            'user_id'       => Auth::id(), // Pastikan user_id juga masuk jika kategori per guru
+            'user_id'       => Auth::id(),
             'nama_kategori' => $request->nama_kategori,
             'kelas'         => $request->kelas,
             'created_at'    => now(),

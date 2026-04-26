@@ -10,11 +10,13 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
     </style>
 </head>
-<body class="bg-[#F8FAFC]">
+{{-- PERBAIKAN: Gunakan bg-[#0f172a] (Slate 900) agar seluruh halaman punya dasar gelap --}}
+<body class="antialiased bg-[#0f172a]">
 
     @include('layout.partials.navbar')
 
-    <main class="min-h-screen">
+    {{-- PERBAIKAN: Hapus bg-inherit dan pastikan main menggunakan warna gelap yang sama --}}
+    <main class="min-h-screen bg-[#0f172a]">
         @yield('konten')
     </main>
 
