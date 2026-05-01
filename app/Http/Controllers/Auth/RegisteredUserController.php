@@ -35,26 +35,22 @@ class RegisteredUserController extends Controller
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'kelas' => ['required', 'integer', 'in:4,5,6'], // Validasi input kelas
+        'role' => ['required', 'string', 'in:siswa,guru'],
+        'kelas' => ['required_if:role,siswa', 'nullable', 'integer', 'in:4,5,6'],
     ]);
 
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'role' => $request->role, // Paksa role jadi siswa saat daftar
-        'kelas' => ($request->role === 'guru') ? null : $request->kelas, // Simpan pilihan kelas
+        'role' => $request->role,
+        'kelas' => ($request->role === 'guru') ? null : $request->kelas,
     ]);
 
     event(new Registered($user));
 
     Auth::login($user);
 
-    // Redirect otomatis berdasarkan role
-    if ($user->role === 'guru') {
-        return redirect()->route('admin.dashboard');
-    }
-
-    return redirect()->route('siswa.dashboard');
+    return redirect()->route('dashboard');
 }
 }

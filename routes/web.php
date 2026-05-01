@@ -16,6 +16,12 @@ Route::get('/dashboard', function () {
     return redirect()->route('siswa.dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 // AREA SISWA
 Route::middleware(['auth', 'checkRole:siswa'])->group(function () {
     Route::get('/siswa/dashboard', [QuizController::class, 'index'])->name('siswa.dashboard');
@@ -33,9 +39,7 @@ Route::middleware(['auth', 'checkRole:siswa'])->group(function () {
 // AREA GURU
 Route::middleware(['auth', 'checkRole:guru'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [QuestionController::class, 'dashboard'])->name('admin.dashboard');
-    Route::resource('questions', QuestionController::class);
+    Route::resource('questions', QuestionController::class)->only(['create', 'store']);
 });
-
-Route::get('/quiz/start/{id}', [QuizController::class, 'startQuiz'])->name('quiz.start');
 
 require __DIR__.'/auth.php';
