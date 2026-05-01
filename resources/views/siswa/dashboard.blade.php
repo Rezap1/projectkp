@@ -23,6 +23,18 @@
                     </h1>
 
                     <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r {{ $badgeColor }} rounded-2xl blur opacity-60 group-hover:opacity-100 transition duration-500"></div>
+
+                        <div class="relative flex items-center gap-3 bg-slate-950/90 text-white px-5 py-3 rounded-2xl uppercase tracking-tight border border-white/20 shadow-2xl">
+                            <x-tier-emblem :tier="$tier" size="sm" />
+                            <div class="leading-tight">
+                                <p class="text-[10px] font-black tracking-[0.22em] text-slate-500">CURRENT TIER</p>
+                                <p class="text-lg font-black">{{ $badge }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative group hidden">
                         <div class="absolute -inset-1 bg-gradient-to-r from-fuchsia-600 to-cyan-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
 
                         <span class="relative flex items-center gap-2 bg-slate-900 text-white text-xl font-black px-6 py-3 rounded-xl uppercase tracking-tighter border border-white/20">
@@ -143,6 +155,10 @@
 
                 {{-- Stats --}}
                 <div class="bg-[#1e293b] p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden border border-white/5">
+                    <div class="mb-8 rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                        <x-tier-emblem :tier="$tier" size="md" show-label="true" />
+                    </div>
+
                     <h3 class="text-xl font-black mb-8 text-cyan-400 uppercase italic tracking-widest">
                         Statistik Kamu 📊
                     </h3>
@@ -227,9 +243,59 @@
 
 {{-- SweetAlert Rank Up --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('rankUp'))
+    <template id="rank-up-template">
+        <div class="rank-award">
+            <div class="rank-rays"></div>
+            <span class="rank-spark rank-spark-1"></span>
+            <span class="rank-spark rank-spark-2"></span>
+            <span class="rank-spark rank-spark-3"></span>
+            <span class="rank-spark rank-spark-4"></span>
+
+            <div class="rank-emblem-pop">
+                <x-tier-emblem :tier="session('rankUp.tier')" size="xl" />
+            </div>
+
+            <p class="rank-kicker">Rank Promotion</p>
+            <h2 class="rank-title">{{ session('rankUp.tier.name') }}</h2>
+            <div class="rank-stars">{{ str_repeat('*', session('rankUp.tier.stars', 1)) }}</div>
+            <p class="rank-copy">{{ session('rankUp.pesan') }}</p>
+
+            <div class="rank-score">
+                <span>Total XP</span>
+                <strong>{{ number_format(session('rankUp.score', 0)) }}</strong>
+            </div>
+        </div>
+    </template>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rankTemplate = document.getElementById('rank-up-template');
+
+        Swal.fire({
+            title: '',
+            html: rankTemplate ? rankTemplate.innerHTML : '',
+            background: 'transparent',
+            color: '#fff',
+            buttonsStyling: false,
+            confirmButtonText: 'LANJUTKAN',
+            padding: 0,
+            width: 520,
+            backdrop: 'rgba(2, 6, 23, 0.92)',
+            showClass: { popup: 'rank-popup-in' },
+            hideClass: { popup: 'rank-popup-out' },
+            customClass: {
+                popup: 'rank-popup',
+                htmlContainer: 'rank-html',
+                confirmButton: 'rank-confirm'
+            }
+        });
+    });
+    </script>
+@endif
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    @if(session('rankUp'))
+    @if(false && session('rankUp'))
         Swal.fire({
             title: 'LEVEL UP! ⚡',
             html: '<div class="py-4 text-lg font-black text-cyan-400 uppercase">{{ session('rankUp')['pesan'] }}</div>',
@@ -243,4 +309,174 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
 });
 </script>
+<style>
+    .rank-popup {
+        border-radius: 28px;
+        background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(49, 46, 129, 0.94));
+        border: 1px solid rgba(125, 211, 252, 0.28);
+        box-shadow: 0 0 70px rgba(34, 211, 238, 0.24), inset 0 0 32px rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+    }
+
+    .rank-html {
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden;
+    }
+
+    .rank-award {
+        position: relative;
+        min-height: 520px;
+        padding: 54px 36px 34px;
+        text-align: center;
+        isolation: isolate;
+    }
+
+    .rank-award::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 50% 22%, rgba(250, 204, 21, 0.22), transparent 26%),
+            radial-gradient(circle at 16% 18%, rgba(34, 211, 238, 0.20), transparent 25%),
+            radial-gradient(circle at 84% 26%, rgba(217, 70, 239, 0.22), transparent 23%);
+        z-index: -2;
+    }
+
+    .rank-rays {
+        position: absolute;
+        inset: -90px;
+        background: conic-gradient(from 0deg, transparent 0 10deg, rgba(255,255,255,0.12) 10deg 16deg, transparent 16deg 30deg);
+        animation: rank-spin 12s linear infinite;
+        z-index: -1;
+        opacity: 0.68;
+    }
+
+    .rank-emblem-pop {
+        display: inline-flex;
+        justify-content: center;
+        animation: rank-rise 850ms cubic-bezier(.2,.9,.2,1.25) both;
+    }
+
+    .rank-kicker {
+        margin-top: 22px;
+        color: #67e8f9;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+    }
+
+    .rank-title {
+        margin-top: 8px;
+        color: #fff;
+        font-size: clamp(34px, 8vw, 58px);
+        font-weight: 1000;
+        line-height: 0.95;
+        text-transform: uppercase;
+        text-shadow: 0 0 24px rgba(34, 211, 238, 0.45);
+    }
+
+    .rank-stars {
+        margin-top: 14px;
+        color: #fde68a;
+        font-size: 26px;
+        font-weight: 1000;
+        letter-spacing: 0.42em;
+        text-indent: 0.42em;
+    }
+
+    .rank-copy {
+        margin: 16px auto 0;
+        max-width: 360px;
+        color: #cbd5e1;
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.6;
+    }
+
+    .rank-score {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 24px;
+        padding: 12px 18px;
+        border: 1px solid rgba(125, 211, 252, 0.24);
+        border-radius: 14px;
+        background: rgba(2, 6, 23, 0.45);
+    }
+
+    .rank-score span {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .rank-score strong {
+        color: #67e8f9;
+        font-size: 22px;
+        font-weight: 1000;
+    }
+
+    .rank-confirm {
+        margin: 0 0 34px !important;
+        border-radius: 14px !important;
+        background: linear-gradient(90deg, #22d3ee, #a855f7, #facc15) !important;
+        color: #020617 !important;
+        padding: 14px 34px !important;
+        font-size: 13px !important;
+        font-weight: 1000 !important;
+        letter-spacing: 0.16em !important;
+        box-shadow: 0 14px 36px rgba(34, 211, 238, 0.24) !important;
+    }
+
+    .rank-spark {
+        position: absolute;
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: #fde68a;
+        box-shadow: 0 0 24px #fde68a;
+        animation: rank-float 1.9s ease-in-out infinite alternate;
+    }
+
+    .rank-spark-1 { left: 18%; top: 20%; animation-delay: 0ms; }
+    .rank-spark-2 { right: 18%; top: 18%; animation-delay: 280ms; background: #67e8f9; box-shadow: 0 0 24px #67e8f9; }
+    .rank-spark-3 { left: 20%; bottom: 25%; animation-delay: 520ms; background: #e879f9; box-shadow: 0 0 24px #e879f9; }
+    .rank-spark-4 { right: 22%; bottom: 28%; animation-delay: 740ms; }
+
+    .rank-popup-in {
+        animation: rank-popup-in 460ms cubic-bezier(.18,.9,.28,1.18);
+    }
+
+    .rank-popup-out {
+        animation: rank-popup-out 220ms ease-in forwards;
+    }
+
+    @keyframes rank-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes rank-rise {
+        0% { opacity: 0; transform: translateY(24px) scale(0.72) rotate(-8deg); }
+        70% { opacity: 1; transform: translateY(-4px) scale(1.08) rotate(2deg); }
+        100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+    }
+
+    @keyframes rank-float {
+        from { transform: translateY(0) scale(0.8); opacity: 0.6; }
+        to { transform: translateY(-22px) scale(1.2); opacity: 1; }
+    }
+
+    @keyframes rank-popup-in {
+        from { opacity: 0; transform: scale(0.88) translateY(22px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes rank-popup-out {
+        to { opacity: 0; transform: scale(0.92) translateY(12px); }
+    }
+</style>
 @endsection

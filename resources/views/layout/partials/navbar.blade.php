@@ -38,6 +38,17 @@
                 </div>
             </a>
 
+            @auth
+                @if(Auth::user()->role === 'guru')
+                    <div class="relative z-10 hidden items-center gap-2 lg:flex">
+                        <a href="{{ route('admin.dashboard') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('admin.dashboard') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Dashboard</a>
+                        <a href="{{ route('questions.index') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('questions.*') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Soal</a>
+                        <a href="{{ route('categories.index') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('categories.*') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Kategori</a>
+                        <a href="{{ route('results.index') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('results.*') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Hasil</a>
+                    </div>
+                @endif
+            @endauth
+
             {{-- User & Action Section --}}
             <div class="relative z-10 flex items-center gap-6">
                 @auth
@@ -53,7 +64,7 @@
                         {{-- Info --}}
                         <div class="flex flex-col items-start leading-tight">
                             <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400 animate-pulse">
-                                Player Online
+                                {{ Auth::user()->role === 'guru' ? 'Guru Online' : 'Player Online' }}
                             </span>
                             <span class="text-sm font-bold text-white uppercase tracking-tight">
                                 {{ Auth::user()->name }}

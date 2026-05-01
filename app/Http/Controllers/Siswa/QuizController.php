@@ -70,8 +70,9 @@ class QuizController extends Controller
         $rataRata = $userResults->avg('skor') ?? 0;
         $skorTertinggi = $userResults->max('skor') ?? 0;
         $totalSkorSiswa = $userResults->sum('skor');
-        $badge = $this->getTierName($totalSkorSiswa);
-        $badgeColor = $this->getBadgeColor($totalSkorSiswa);
+        $tier = $this->getTierData($totalSkorSiswa);
+        $badge = $tier['label'];
+        $badgeColor = $tier['gradient'];
         $targetSkor = 5000;
 
         // 3. Peringkat Pribadi
@@ -98,7 +99,7 @@ class QuizController extends Controller
 
         return view('siswa.dashboard', compact(
             'listKuis', 'rataRata', 'skorTertinggi', 'peringkat',
-            'badge', 'badgeColor', 'totalSkorSiswa', 'targetSkor', 'leaderboard'
+            'badge', 'badgeColor', 'tier', 'totalSkorSiswa', 'targetSkor', 'leaderboard'
         ));
     }
 
@@ -153,7 +154,7 @@ class QuizController extends Controller
             ->whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', $currentYear)
             ->sum('skor');
-        $tierLama = $this->getTierName($skorSebelum);
+        $tierLama = $this->getTierData($skorSebelum);
 
         $jawabanUser = $request->input('jawaban', []);
 
@@ -203,12 +204,14 @@ class QuizController extends Controller
             ->whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', $currentYear)
             ->sum('skor');
-        $tierBaru = $this->getTierName($skorSesudah);
+        $tierBaru = $this->getTierData($skorSesudah);
 
-        if ($tierLama !== $tierBaru && $skorSesudah > $skorSebelum) {
+        if ($tierLama['label'] !== $tierBaru['label'] && $skorSesudah > $skorSebelum) {
             session()->flash('rankUp', [
                 'tier' => $tierBaru,
-                'pesan' => 'Luar biasa! Peringkatmu sekarang: ' . $tierBaru
+                'previous' => $tierLama,
+                'score' => $skorSesudah,
+                'pesan' => 'Peringkatmu sekarang: ' . $tierBaru['label'],
             ]);
         }
 
@@ -242,24 +245,70 @@ class QuizController extends Controller
 
     private function getTierName($totalSkor)
     {
-        if ($totalSkor >= 2500) return 'Mythical Glory ⭐⭐⭐';
-        if ($totalSkor >= 2000) return 'Mythic ⭐⭐';
-        if ($totalSkor >= 1700) return 'Mythic ⭐';
-        if ($totalSkor >= 1400) return 'Legend ⭐⭐⭐';
-        if ($totalSkor >= 1100) return 'Legend ⭐⭐';
-        if ($totalSkor >= 800)  return 'Legend ⭐';
-        if ($totalSkor >= 600)  return 'Epic ⭐⭐⭐';
-        if ($totalSkor >= 400)  return 'Epic ⭐⭐';
-        if ($totalSkor >= 200)  return 'Epic ⭐';
-        return 'Warrior ⭐';
+        return $this->getTierData($totalSkor)['label'];
     }
 
     private function getBadgeColor($totalSkor)
     {
-        if ($totalSkor >= 2500) return 'from-purple-700 via-red-600 to-yellow-500';
-        if ($totalSkor >= 1700) return 'from-purple-600 to-blue-600';
-        if ($totalSkor >= 800)  return 'from-orange-500 to-yellow-500';
-        if ($totalSkor >= 200)  return 'from-teal-500 to-green-500';
-        return 'from-slate-500 to-slate-600';
+        return $this->getTierData($totalSkor)['gradient'];
+    }
+
+    private function getTierData($totalSkor): array
+    {
+        $score = (int) $totalSkor;
+
+        if ($score >= 2500) {
+            return $this->tierPayload('mythical_glory', 'Mythical Glory', 3, 2500, null, 'from-purple-700 via-red-600 to-yellow-400', '#facc15', '#dc2626', '#6d28d9');
+        }
+
+        if ($score >= 2000) {
+            return $this->tierPayload('mythic', 'Mythic', 2, 2000, 2500, 'from-violet-600 via-fuchsia-500 to-blue-500', '#c084fc', '#7c3aed', '#2563eb');
+        }
+
+        if ($score >= 1700) {
+            return $this->tierPayload('mythic', 'Mythic', 1, 1700, 2000, 'from-violet-600 via-fuchsia-500 to-blue-500', '#c084fc', '#7c3aed', '#2563eb');
+        }
+
+        if ($score >= 1400) {
+            return $this->tierPayload('legend', 'Legend', 3, 1400, 1700, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
+        }
+
+        if ($score >= 1100) {
+            return $this->tierPayload('legend', 'Legend', 2, 1100, 1400, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
+        }
+
+        if ($score >= 800) {
+            return $this->tierPayload('legend', 'Legend', 1, 800, 1100, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
+        }
+
+        if ($score >= 600) {
+            return $this->tierPayload('epic', 'Epic', 3, 600, 800, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+        }
+
+        if ($score >= 400) {
+            return $this->tierPayload('epic', 'Epic', 2, 400, 600, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+        }
+
+        if ($score >= 200) {
+            return $this->tierPayload('epic', 'Epic', 1, 200, 400, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+        }
+
+        return $this->tierPayload('warrior', 'Warrior', 1, 0, 200, 'from-slate-500 via-zinc-400 to-stone-500', '#94a3b8', '#64748b', '#44403c');
+    }
+
+    private function tierPayload(string $key, string $name, int $stars, int $minScore, ?int $nextScore, string $gradient, string $primary, string $secondary, string $accent): array
+    {
+        return [
+            'key' => $key,
+            'name' => $name,
+            'stars' => $stars,
+            'label' => $name . ' ' . str_repeat('*', $stars),
+            'min_score' => $minScore,
+            'next_score' => $nextScore,
+            'gradient' => $gradient,
+            'primary' => $primary,
+            'secondary' => $secondary,
+            'accent' => $accent,
+        ];
     }
 }

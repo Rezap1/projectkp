@@ -39,7 +39,13 @@ Route::middleware(['auth', 'checkRole:siswa'])->group(function () {
 // AREA GURU
 Route::middleware(['auth', 'checkRole:guru'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [QuestionController::class, 'dashboard'])->name('admin.dashboard');
-    Route::resource('questions', QuestionController::class)->only(['create', 'store']);
+    Route::get('/categories', [QuestionController::class, 'categories'])->name('categories.index');
+    Route::post('/categories', [QuestionController::class, 'storeCategory'])->name('categories.store');
+    Route::patch('/categories/{category}', [QuestionController::class, 'updateCategory'])->name('categories.update');
+    Route::delete('/categories/{category}', [QuestionController::class, 'destroyCategory'])->name('categories.destroy');
+    Route::get('/results', [QuestionController::class, 'results'])->name('results.index');
+    Route::delete('/results/{result}', [QuestionController::class, 'destroyResult'])->name('results.destroy');
+    Route::resource('questions', QuestionController::class)->except(['show']);
 });
 
 require __DIR__.'/auth.php';

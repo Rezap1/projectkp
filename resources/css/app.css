@@ -1,4 +1,8 @@
+@import "animate.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "animate.css";
+
+[x-cloak] {
+    display: none !important;
+}
