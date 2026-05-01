@@ -105,10 +105,11 @@ class QuizController extends Controller
     public function show($id)
     {
         $user = auth()->user();
+        $category = Category::where('kelas', $user->kelas)->findOrFail($id);
 
         // Proteksi: Cek apakah sudah pernah mengerjakan hari ini
         $alreadyDone = Result::where('user_id', $user->id)
-                            ->where('category_id', $id)
+                            ->where('category_id', $category->id)
                             ->whereDate('created_at', now()->toDateString())
                             ->exists();
 
@@ -116,10 +117,8 @@ class QuizController extends Controller
             return redirect()->route('siswa.dashboard')->with('error', 'Kamu sudah mengerjakan kuis ini hari ini.');
         }
 
-        $category = Category::findOrFail($id);
-
         // Hanya ambil 1 soal TERBARU hari ini
-        $questions = Question::where('category_id', $id)
+        $questions = Question::where('category_id', $category->id)
                              ->whereDate('created_at', now()->toDateString())
                              ->latest()
                              ->take(1)
@@ -135,10 +134,11 @@ class QuizController extends Controller
     public function submit(Request $request, $category_id)
     {
         $user = auth()->user();
+        $category = Category::where('kelas', $user->kelas)->findOrFail($category_id);
 
         // Proteksi ganda agar tidak bisa submit berkali-kali
         $alreadyDone = Result::where('user_id', $user->id)
-                            ->where('category_id', $category_id)
+                            ->where('category_id', $category->id)
                             ->whereDate('created_at', now()->toDateString())
                             ->exists();
 
@@ -155,10 +155,10 @@ class QuizController extends Controller
             ->sum('skor');
         $tierLama = $this->getTierName($skorSebelum);
 
-        $jawabanUser = $request->input('jawaban');
+        $jawabanUser = $request->input('jawaban', []);
 
         // Ambil 1 soal terbaru hari ini
-        $questions = Question::where('category_id', $category_id)
+        $questions = Question::where('category_id', $category->id)
                              ->whereDate('created_at', now()->toDateString())
                              ->latest()
                              ->take(1)
@@ -167,7 +167,7 @@ class QuizController extends Controller
         $totalSoal = $questions->count();
         $jawabanBenarCounter = 0;
 
-        if ($jawabanUser && $totalSoal > 0) {
+        if ($totalSoal > 0) {
             foreach ($questions as $soal) {
                 $pilihanSiswa = $jawabanUser[$soal->id] ?? null;
 
@@ -175,11 +175,10 @@ class QuizController extends Controller
                     [
                         'user_id' => $user->id,
                         'question_id' => $soal->id,
-                        'category_id' => $category_id,
+                        'category_id' => $category->id,
                     ],
                     [
-                        'jawaban_siswa' => $pilihanSiswa,
-                        'created_at' => now(),
+                        'jawaban_siswa' => $pilihanSiswa ?: '-',
                     ]
                 );
 
@@ -192,19 +191,13 @@ class QuizController extends Controller
         $skor = ($totalSoal > 0) ? ($jawabanBenarCounter / $totalSoal) * 100 : 0;
 
         // Simpan Hasil (Hanya satu hasil per kategori per hari)
-        Result::updateOrCreate(
-            [
-                'user_id'     => $user->id,
-                'category_id' => $category_id,
-                'created_at'  => now()->toDateString(), // Filter tanggal
-            ],
-            [
-                'skor'        => $skor,
-                'benar'       => $jawabanBenarCounter,
-                'salah'       => $totalSoal - $jawabanBenarCounter,
-                'created_at'  => now(), // Timestamps lengkap
-            ]
-        );
+        Result::create([
+            'user_id'     => $user->id,
+            'category_id' => $category->id,
+            'skor'        => $skor,
+            'benar'       => $jawabanBenarCounter,
+            'salah'       => $totalSoal - $jawabanBenarCounter,
+        ]);
 
         $skorSesudah = Result::where('user_id', $user->id)
             ->whereMonth('created_at', $currentMonth)
@@ -225,18 +218,20 @@ class QuizController extends Controller
     public function review($category_id)
     {
         $user = auth()->user();
+        $category = Category::where('kelas', $user->kelas)->findOrFail($category_id);
+
         $result = Result::where('user_id', $user->id)
-                        ->where('category_id', $category_id)
+                        ->where('category_id', $category->id)
                         ->whereDate('created_at', now()->toDateString())
                         ->latest()
                         ->firstOrFail();
 
-        $category = Category::with(['questions' => function($query) {
+        $category->load(['questions' => function($query) {
             $query->whereDate('created_at', now()->toDateString())->latest()->take(1);
-        }])->findOrFail($category_id);
+        }]);
 
         $jawabanSiswa = \App\Models\UserAnswer::where('user_id', $user->id)
-                        ->where('category_id', $category_id)
+                        ->where('category_id', $category->id)
                         ->whereDate('created_at', now()->toDateString())
                         ->latest()
                         ->take($category->questions->count())

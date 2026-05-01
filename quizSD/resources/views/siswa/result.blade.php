@@ -101,12 +101,12 @@
 
             {{-- Button --}}
             <div class="mt-10 flex flex-col md:flex-row gap-4">
-                <a href="{{ route('siswa.index') }}"
+                <a href="{{ route('siswa.dashboard') }}"
                    class="flex-1 bg-slate-800 text-white font-black py-4 rounded-2xl hover:bg-slate-700 transition shadow-lg uppercase tracking-wide">
                     Kembali ke Arena
                 </a>
 
-                <a href="{{ route('siswa.kuis.show', $category->slug) }}"
+                <a href="{{ route('kuis.show', $category->id) }}"
                    class="flex-1 bg-gradient-to-r from-cyan-500 to-fuchsia-500 text-white font-black py-4 rounded-2xl hover:scale-105 transition shadow-lg shadow-cyan-500/20 uppercase tracking-wide">
                     Tantang Lagi
                 </a>

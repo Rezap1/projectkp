@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['nama_kategori', 'slug', 'kelas', 'user_id'];
+    protected $fillable = ['nama_kategori', 'slug', 'kelas', 'user_id', 'durasi'];
 
     // TAMBAHKAN BARIS INI:
     public function questions(): HasMany
@@ -15,7 +15,8 @@ class Category extends Model
         return $this->hasMany(Question::class);
     }
 
-    public function user() {
-    return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

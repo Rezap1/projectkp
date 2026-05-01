@@ -107,6 +107,12 @@
                         @endforeach
                     </div>
 
+                    @if(($jawabanSiswa[$soal->id] ?? null) === '-')
+                        <p class="mt-4 text-[10px] font-black uppercase tracking-widest text-orange-300">
+                            Tidak dijawab saat waktu habis.
+                        </p>
+                    @endif
+
                 </div>
             @endforeach
         </div>

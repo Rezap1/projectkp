@@ -8,6 +8,7 @@ use App\Models\Question;
 use App\Models\Category;
 use App\Models\Result;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class QuestionController extends Controller
 {
@@ -99,10 +100,18 @@ class QuestionController extends Controller
     // Proses Simpan ke Database
     public function store(Request $request)
     {
-        // Validasi Dasar
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|integer',
+            'durasi' => 'required|integer|min:1|max:180',
             'questions' => 'required|array',
+        ]);
+
+        $category = Category::where('user_id', Auth::id())
+            ->whereKey($request->category_id)
+            ->firstOrFail();
+
+        $category->update([
+            'durasi' => $request->durasi,
         ]);
 
         $questionsData = $request->input('questions');
@@ -120,7 +129,7 @@ class QuestionController extends Controller
                 }
 
                 Question::create([
-                    'category_id'   => $request->category_id,
+                    'category_id'   => $category->id,
                     'pertanyaan'    => $data['pertanyaan'],
                     'opsi_a'        => $data['opsi_a'] ?? '-',
                     'opsi_b'        => $data['opsi_b'] ?? '-',
@@ -135,10 +144,10 @@ class QuestionController extends Controller
         }
 
         if ($count == 0) {
-            return redirect()->back()->with('error', 'Mohon isi minimal satu pertanyaan.');
+            return redirect()->back()->with('success', 'Timer kuis ' . $category->nama_kategori . ' berhasil diperbarui menjadi ' . $request->durasi . ' menit.');
         }
 
-        return redirect()->route('admin.dashboard')->with('success', $count . ' Soal berhasil ditambahkan ke bank kuis!');
+        return redirect()->route('admin.dashboard')->with('success', $count . ' Soal berhasil ditambahkan dan timer kuis diatur ' . $request->durasi . ' menit!');
     }
 
     public function storeCategory(Request $request)
@@ -146,12 +155,15 @@ class QuestionController extends Controller
         $request->validate([
             'nama_kategori' => 'required|string|max:255',
             'kelas'         => 'required|in:4,5,6',
+            'durasi'        => 'nullable|integer|min:1|max:180',
         ]);
 
         Category::create([
             'user_id'       => Auth::id(),
             'nama_kategori' => $request->nama_kategori,
+            'slug'          => Str::slug($request->nama_kategori . '-kelas-' . $request->kelas . '-' . Auth::id()),
             'kelas'         => $request->kelas,
+            'durasi'        => $request->durasi ?? 60,
             'created_at'    => now(),
             'updated_at'    => now(),
         ]);

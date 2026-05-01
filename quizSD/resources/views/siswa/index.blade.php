@@ -70,7 +70,7 @@
                 </div>
 
                 {{-- Button --}}
-                <a href="{{ route('siswa.kuis.show', $cat->slug) }}"
+                <a href="{{ route('kuis.show', $cat->id) }}"
                    class="inline-flex items-center justify-center gap-3 w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-black py-4 rounded-2xl shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all group-hover:scale-[1.02] active:scale-95 uppercase tracking-wider">
                     <span>Masuk Arena</span>
                     <svg xmlns="http://www.w3.org/2000/svg"

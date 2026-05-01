@@ -54,7 +54,7 @@
                 <div class="bg-slate-900/80 px-6 py-4 rounded-3xl shadow border border-white/10">
                     <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Durasi</p>
                     <p class="text-xl font-bold text-fuchsia-400 text-center">
-                        {{ $category->durasi }}<span class="text-xs ml-1">Min</span>
+                        {{ max((int) ($category->durasi ?? 60), 1) }}<span class="text-xs ml-1">Min</span>
                     </p>
                 </div>
             </div>
@@ -155,7 +155,7 @@
 </div>
 
 <script>
-    let timeLeft = {{ $category->durasi * 60 }};
+    let timeLeft = {{ max((int) ($category->durasi ?? 60), 1) * 60 }};
 
     const timerDisplay = document.getElementById('timer');
     const timerMobile = document.getElementById('timerMobile');

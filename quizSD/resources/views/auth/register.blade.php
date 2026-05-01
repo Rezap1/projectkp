@@ -63,11 +63,14 @@
                 <label class="block text-xs font-black text-cyan-400 uppercase tracking-widest mb-2">
                     Mendaftar Sebagai
                 </label>
-                <select name="role"
+                <select name="role" id="role"
                     class="w-full px-5 py-4 rounded-2xl bg-slate-800/50 border border-white/10 text-white focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all outline-none appearance-none">
-                    <option value="siswa" class="text-black">Siswa (Ingin Belajar)</option>
-                    <option value="guru" class="text-black">Guru (Ingin Mengajar)</option>
+                    <option value="siswa" class="text-black" {{ old('role') === 'siswa' ? 'selected' : '' }}>Siswa (Ingin Belajar)</option>
+                    <option value="guru" class="text-black" {{ old('role') === 'guru' ? 'selected' : '' }}>Guru (Ingin Mengajar)</option>
                 </select>
+                @error('role')
+                    <p class="text-fuchsia-400 text-[10px] mt-1 font-black uppercase">{{ $message }}</p>
+                @enderror
             </div>
 
             {{-- Password --}}
@@ -104,7 +107,7 @@
             </div>
 
             {{-- Kelas --}}
-            <div>
+            <div id="kelasWrapper">
                 <label for="kelas" class="block text-xs font-black text-cyan-400 uppercase tracking-widest mb-2">
                     Pilih Kelas
                 </label>
@@ -112,10 +115,13 @@
                     class="w-full px-5 py-4 rounded-2xl bg-slate-800/50 border border-white/10 text-white focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all outline-none appearance-none"
                     required>
                     <option value="" class="text-black">-- Pilih Kelas --</option>
-                    <option value="4" class="text-black">Kelas 4</option>
-                    <option value="5" class="text-black">Kelas 5</option>
-                    <option value="6" class="text-black">Kelas 6</option>
+                    <option value="4" class="text-black" {{ old('kelas') == 4 ? 'selected' : '' }}>Kelas 4</option>
+                    <option value="5" class="text-black" {{ old('kelas') == 5 ? 'selected' : '' }}>Kelas 5</option>
+                    <option value="6" class="text-black" {{ old('kelas') == 6 ? 'selected' : '' }}>Kelas 6</option>
                 </select>
+                @error('kelas')
+                    <p class="text-fuchsia-400 text-[10px] mt-1 font-black uppercase">{{ $message }}</p>
+                @enderror
             </div>
 
             {{-- Submit --}}
@@ -144,6 +150,23 @@
         const input = document.getElementById(id);
         input.type = input.type === 'password' ? 'text' : 'password';
     }
+
+    const roleSelect = document.getElementById('role');
+    const kelasSelect = document.getElementById('kelas');
+    const kelasWrapper = document.getElementById('kelasWrapper');
+
+    function syncKelasField() {
+        const isGuru = roleSelect.value === 'guru';
+        kelasWrapper.classList.toggle('hidden', isGuru);
+        kelasSelect.required = !isGuru;
+
+        if (isGuru) {
+            kelasSelect.value = '';
+        }
+    }
+
+    roleSelect.addEventListener('change', syncKelasField);
+    syncKelasField();
 
     document.getElementById('registerForm').addEventListener('submit', function () {
         const btn = document.getElementById('registerBtn');
