@@ -46,6 +46,13 @@
                         <a href="{{ route('categories.index') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('categories.*') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Kategori</a>
                         <a href="{{ route('results.index') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('results.*') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Hasil</a>
                     </div>
+                @elseif(Auth::user()->role === 'admin')
+                    <div class="relative z-10 hidden items-center gap-2 lg:flex">
+                        <a href="{{ route('superadmin.dashboard') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('superadmin.dashboard') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Dashboard</a>
+                        <a href="{{ route('superadmin.users') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('superadmin.users') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Pengguna</a>
+                        <a href="{{ route('superadmin.classes') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('superadmin.classes') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Kelas</a>
+                        <a href="{{ route('superadmin.results') }}" class="rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition {{ request()->routeIs('superadmin.results') ? 'bg-cyan-400 text-slate-950' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">Semua Hasil</a>
+                    </div>
                 @endif
             @endauth
 
@@ -64,7 +71,7 @@
                         {{-- Info --}}
                         <div class="flex flex-col items-start leading-tight">
                             <span class="text-[10px] font-black uppercase tracking-widest text-cyan-400 animate-pulse">
-                                {{ Auth::user()->role === 'guru' ? 'Guru Online' : 'Player Online' }}
+                                {{ Auth::user()->role === 'admin' ? 'SuperAdmin' : (Auth::user()->role === 'guru' ? 'Guru Online' : 'Player Online') }}
                             </span>
                             <span class="text-sm font-bold text-white uppercase tracking-tight">
                                 {{ Auth::user()->name }}
