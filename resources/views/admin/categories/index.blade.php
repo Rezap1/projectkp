@@ -11,7 +11,7 @@
                 </a>
                 <p class="mt-6 text-xs font-black uppercase tracking-[0.24em] text-cyan-300">Database Kuis</p>
                 <h1 class="mt-2 text-4xl font-black tracking-tight text-white">Mata Pelajaran</h1>
-                <p class="mt-3 max-w-2xl text-sm font-semibold leading-6 text-slate-400">Buat kategori kuis per kelas, atur durasi, dan pantau jumlah soal serta hasil yang tersimpan.</p>
+                <p class="mt-3 max-w-2xl text-sm font-semibold leading-6 text-slate-400">Buat kategori kuis per kelas, lalu pantau jumlah soal serta hasil yang tersimpan.</p>
             </div>
 
             <a href="{{ route('questions.create') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-3 text-sm font-black text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-300">
@@ -40,19 +40,13 @@
                         <input name="nama_kategori" value="{{ old('nama_kategori') }}" required placeholder="Contoh: Matematika Pecahan" class="w-full rounded-lg border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-bold text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">Kelas</label>
-                            <select name="kelas" required class="w-full rounded-lg border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-bold text-white outline-none transition focus:border-cyan-400">
-                                <option value="4">Kelas 4</option>
-                                <option value="5">Kelas 5</option>
-                                <option value="6">Kelas 6</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">Durasi</label>
-                            <input name="durasi" type="number" min="1" max="180" value="{{ old('durasi', 60) }}" required class="w-full rounded-lg border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-bold text-white outline-none transition focus:border-cyan-400">
-                        </div>
+                    <div>
+                        <label class="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">Kelas</label>
+                        <select name="kelas" required class="w-full rounded-lg border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-bold text-white outline-none transition focus:border-cyan-400">
+                            <option value="4">Kelas 4</option>
+                            <option value="5">Kelas 5</option>
+                            <option value="6">Kelas 6</option>
+                        </select>
                     </div>
 
                     <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-300">
@@ -77,7 +71,7 @@
                                         <h3 class="text-xl font-black text-white">{{ $category->nama_kategori }}</h3>
                                         <span class="rounded-md bg-cyan-400/10 px-3 py-1 text-xs font-black text-cyan-300">Kelas {{ $category->kelas }}</span>
                                     </div>
-                                    <p class="mt-2 text-sm font-bold text-slate-500">{{ $category->durasi }} menit | {{ $category->questions_count }} soal | {{ $category->results_count }} hasil</p>
+                                    <p class="mt-2 text-sm font-bold text-slate-500">{{ $category->questions_count }} soal | {{ $category->results_count }} hasil</p>
                                 </div>
 
                                 <div class="flex items-center gap-2">
@@ -94,7 +88,7 @@
                                 </div>
                             </div>
 
-                            <form x-show="editing === {{ $category->id }}" x-cloak method="POST" action="{{ route('categories.update', $category) }}" class="grid gap-4 md:grid-cols-[1fr_120px_120px_auto] md:items-end">
+                            <form x-show="editing === {{ $category->id }}" x-cloak method="POST" action="{{ route('categories.update', $category) }}" class="grid gap-4 md:grid-cols-[1fr_140px_auto] md:items-end">
                                 @csrf
                                 @method('PATCH')
                                 <div>
@@ -108,10 +102,6 @@
                                             <option value="{{ $kelas }}" @selected($category->kelas == $kelas)>Kelas {{ $kelas }}</option>
                                         @endforeach
                                     </select>
-                                </div>
-                                <div>
-                                    <label class="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">Durasi</label>
-                                    <input name="durasi" type="number" min="1" max="180" value="{{ $category->durasi }}" class="w-full rounded-lg border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-bold text-white outline-none focus:border-cyan-400">
                                 </div>
                                 <div class="flex gap-2">
                                     <button class="rounded-lg bg-cyan-400 px-4 py-3 text-sm font-black text-slate-950 hover:bg-cyan-300">Simpan</button>

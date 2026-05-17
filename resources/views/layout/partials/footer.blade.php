@@ -1,159 +1,122 @@
-<footer class="bg-slate-950 pt-20 pb-10 mt-20 relative overflow-hidden">
+<footer class="relative mt-20 overflow-hidden border-t border-[#d8d0c2] bg-[#ddd6c8]">
+    <div class="absolute left-0 top-0 h-1 w-full bg-[#cfe66a]"></div>
 
-    {{-- Neon Top Border --}}
-    <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
-
-    {{-- Decorative Glow --}}
-    <div class="absolute -top-24 -left-24 w-72 h-72 bg-fuchsia-600/15 rounded-full blur-[120px]"></div>
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]"></div>
-
-    <div class="max-w-7xl mx-auto px-8 relative z-10">
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
-
-            {{-- Kolom 1: Branding --}}
-            <div class="space-y-6">
+    <div class="mx-auto max-w-7xl px-6 py-14 sm:px-8">
+        <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
+            <div class="space-y-5">
                 <div>
-                    <h3 class="text-3xl font-black tracking-tight uppercase italic">
-                        <span class="bg-gradient-to-r from-cyan-400 to-fuchsia-400 bg-clip-text text-transparent">
+                    <h3 class="text-2xl font-black uppercase italic tracking-tight">
+                        <span class="text-[#223f35]">
                             Quiz Arena
                         </span>
                     </h3>
-                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.35em] mt-1">
+                    <p class="mt-1 text-[10px] font-black uppercase tracking-[0.32em] text-slate-500">
                         SDN CIBINONG 2
                     </p>
                 </div>
 
-                <div class="space-y-4">
-                    <p class="text-slate-400 leading-relaxed font-medium text-sm">
-                        Platform pembelajaran digital interaktif untuk membantu siswa belajar lebih seru,
-                        kompetitif, dan menyenangkan melalui sistem kuis berbasis gamifikasi.
-                    </p>
+                <p class="max-w-sm text-sm font-medium leading-6 text-slate-600">
+                    Platform kuis interaktif yang dibuat lebih ceria, mudah dipakai, dan mendukung
+                    proses belajar siswa SD dengan suasana yang menyenangkan.
+                </p>
 
-                    <div class="flex gap-3 items-start">
-                        <span class="text-cyan-400 mt-0.5">📍</span>
-                        <p class="text-slate-500 text-xs font-bold leading-snug uppercase tracking-tight">
-                            Jl. Raya Patrol-Agrabinta, Pananggapan,<br>
-                            Kec. Cibinong, Kabupaten Cianjur, Jawa Barat 43271
-                        </p>
-                    </div>
-                </div>
+                <p class="text-xs font-bold uppercase leading-5 tracking-tight text-slate-500">
+                    Jl. Raya Patrol-Agrabinta, Pananggapan,<br>
+                    Kec. Cibinong, Kabupaten Cianjur, Jawa Barat 43271
+                </p>
             </div>
 
-            {{-- Kolom 2 --}}
             <div class="grid grid-cols-2 gap-8">
-
-                {{-- Navigasi --}}
                 <div class="flex flex-col gap-4">
-                    <h4 class="text-xs font-black text-cyan-400 uppercase tracking-[0.25em]">
+                    <h4 class="text-xs font-black uppercase tracking-[0.25em] text-[#223f35]">
                         Navigasi
                     </h4>
 
-                    <a href="#" class="text-slate-300 hover:text-cyan-400 transition-all font-bold text-sm uppercase italic tracking-tight">
+                    <a href="#" class="text-sm font-bold text-slate-600 transition hover:text-[#223f35]">
                         Dashboard
                     </a>
 
-                    <a href="#" class="text-slate-300 hover:text-cyan-400 transition-all font-bold text-sm uppercase italic tracking-tight">
+                    <a href="#" class="text-sm font-bold text-slate-600 transition hover:text-[#223f35]">
                         Daftar Kuis
                     </a>
 
-                    <a href="#" class="text-slate-300 hover:text-cyan-400 transition-all font-bold text-sm uppercase italic tracking-tight">
-                        Leaderboard
+                    <a href="#" class="text-sm font-bold text-slate-600 transition hover:text-[#223f35]">
+                        Hasil Belajar
                     </a>
                 </div>
 
-                {{-- Developer --}}
                 <div class="flex flex-col gap-4">
-                    <h4 class="text-xs font-black text-fuchsia-400 uppercase tracking-[0.25em]">
+                    <h4 class="text-xs font-black uppercase tracking-[0.25em] text-[#223f35]">
                         Mitra & Dev
                     </h4>
 
                     <div class="space-y-2">
-                        <p class="text-white font-black text-sm italic uppercase">
+                        <p class="text-sm font-black uppercase text-slate-800">
                             Universitas Suryakancana
                         </p>
-
-                        <div class="flex gap-2 items-start">
-                            <span class="text-fuchsia-500 text-[10px]">📍</span>
-                            <p class="text-slate-500 text-[10px] font-bold uppercase leading-tight">
-                                Jl. Pasir Gede Raya, Cianjur, Jawa Barat
-                            </p>
-                        </div>
+                        <p class="text-[10px] font-bold uppercase leading-4 text-slate-500">
+                            Jl. Pasir Gede Raya, Cianjur, Jawa Barat
+                        </p>
                     </div>
 
                     <div class="space-y-1">
-                        <p class="text-white font-black text-sm italic">
+                        <p class="text-sm font-black text-slate-800">
                             Reza Puda Julianda
                         </p>
-                        <p class="text-slate-500 text-[10px] font-black uppercase tracking-tight">
+                        <p class="text-[10px] font-black uppercase tracking-tight text-slate-500">
                             Informatika Developer
-                        </p>
-                        <p class="text-cyan-400 font-black text-xs">
-                            085861261805
                         </p>
                     </div>
                 </div>
             </div>
 
-            {{-- Kolom 3 --}}
-            <div class="bg-slate-900/70 backdrop-blur-xl p-8 rounded-[2rem] border border-cyan-500/10 relative overflow-hidden group shadow-xl">
-
-                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-fuchsia-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                <h4 class="text-sm font-black text-white uppercase tracking-widest mb-5 italic relative z-10">
+            <div class="rounded-3xl border border-[#d8d0c2] bg-[#eee7da] p-7 shadow-lg shadow-slate-400/20">
+                <h4 class="mb-5 text-sm font-black uppercase tracking-widest text-slate-800">
                     Status Sistem
                 </h4>
 
-                <div class="flex flex-col gap-5 relative z-10">
-
+                <div class="space-y-5">
                     <div>
-                        <p class="text-[10px] text-fuchsia-400 font-black uppercase tracking-widest mb-1">
-                            🔄 Sinkronisasi Aktif
+                        <p class="text-[10px] font-black uppercase tracking-widest text-[#223f35]">
+                            Sinkronisasi Aktif
                         </p>
-                        <p class="text-white font-black italic text-lg uppercase tracking-tight">
+                        <p class="mt-1 text-lg font-black uppercase tracking-tight text-slate-800">
                             Kerja Praktek 2026
                         </p>
                     </div>
 
-                    <div class="flex items-center justify-between">
-                        <div class="px-4 py-2 bg-cyan-600 text-white text-[10px] font-black rounded-xl shadow-[0_0_12px_rgba(8,145,178,0.4)] uppercase">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="rounded-xl bg-[#cfe66a] px-4 py-2 text-[10px] font-black uppercase text-[#223f35] shadow-md shadow-slate-400/20">
                             Version 2.0
                         </div>
 
-                        <span class="text-[9px] text-slate-500 font-black uppercase tracking-widest">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">
                             Stable Core
                         </span>
                     </div>
-
                 </div>
             </div>
         </div>
 
-        {{-- Bottom Footer --}}
-        <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-
-            <p class="text-sm text-slate-500 font-bold uppercase tracking-tight text-center md:text-left">
-                &copy; 2026
-                <span class="text-slate-300">SDN CIBINONG 2</span>.
-                Dikembangkan oleh Mahasiswa
-                <span class="text-cyan-400">UNSUR</span>.
+        <div class="mt-12 flex flex-col items-center justify-between gap-5 border-t border-[#d8d0c2] pt-7 md:flex-row">
+            <p class="text-center text-sm font-bold text-slate-500 md:text-left">
+                &copy; 2026 <span class="text-slate-800">SDN CIBINONG 2</span>.
+                Dikembangkan oleh Mahasiswa <span class="text-[#223f35]">UNSUR</span>.
             </p>
 
             <div class="flex items-center gap-4">
-
                 <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-                    <span class="text-xs font-black text-slate-400 uppercase tracking-widest italic">
+                    <div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+                    <span class="text-xs font-black uppercase tracking-widest text-slate-500">
                         Server Online
                     </span>
                 </div>
 
-                <div class="hidden md:block h-4 w-[1px] bg-white/10"></div>
+                <div class="hidden h-4 w-px bg-[#d8d0c2] md:block"></div>
 
-                <span class="text-[10px] font-black text-cyan-400 uppercase tracking-widest italic">
+                <span class="text-[10px] font-black uppercase tracking-widest text-[#223f35]">
                     {{ now()->translatedFormat('F Y') }}
                 </span>
-
             </div>
         </div>
     </div>

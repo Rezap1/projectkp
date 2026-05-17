@@ -6,3 +6,487 @@
 [x-cloak] {
     display: none !important;
 }
+
+/* eLearning dashboard theme inspired by Mike Taylor's dashboard direction:
+   muted warm canvas, deep green panels, and restrained lime accents. */
+.theme-playful main {
+    color: #283a34;
+}
+
+.theme-playful main [class~="bg-[#0f172a]"],
+.theme-playful main [class~="bg-[#0A0F1F]"] {
+    background: transparent !important;
+    color: #283a34 !important;
+}
+
+.theme-playful main [class~="bg-slate-950"],
+.theme-playful main [class~="bg-slate-950/90"],
+.theme-playful main [class~="bg-slate-950/80"],
+.theme-playful main [class~="bg-slate-950/60"],
+.theme-playful main [class~="bg-slate-900"],
+.theme-playful main [class~="bg-slate-900/90"],
+.theme-playful main [class~="bg-slate-900/80"],
+.theme-playful main [class~="bg-slate-900/75"],
+.theme-playful main [class~="bg-slate-900/70"],
+.theme-playful main [class~="bg-[#111827]/80"],
+.theme-playful main [class~="bg-[#1e293b]"] {
+    background-color: rgba(239, 232, 219, 0.95) !important;
+    border-color: #d7cdbc !important;
+    box-shadow: 0 18px 38px rgba(61, 52, 42, 0.11) !important;
+}
+
+.theme-playful main [class~="bg-slate-800"],
+.theme-playful main [class~="bg-slate-800/80"],
+.theme-playful main [class~="bg-slate-800/70"],
+.theme-playful main [class~="bg-slate-800/60"],
+.theme-playful main [class~="bg-slate-800/50"],
+.theme-playful main [class~="bg-slate-800/40"],
+.theme-playful main [class~="bg-slate-700"],
+.theme-playful main [class~="bg-white/5"],
+.theme-playful main [class~="bg-white/[0.04]"],
+.theme-playful main [class~="bg-white/[0.03]"] {
+    background-color: rgba(229, 220, 204, 0.82) !important;
+    border-color: #d7cdbc !important;
+}
+
+.theme-playful main [class~="bg-cyan-500/10"],
+.theme-playful main [class~="bg-cyan-400/10"],
+.theme-playful main [class~="bg-cyan-600/10"] {
+    background-color: #dfe8dc !important;
+}
+
+.theme-playful main [class~="bg-fuchsia-500/10"],
+.theme-playful main [class~="bg-fuchsia-400/10"],
+.theme-playful main [class~="bg-purple-500/10"],
+.theme-playful main [class~="bg-purple-500/5"] {
+    background-color: #e7decf !important;
+}
+
+.theme-playful main [class~="border-white/10"],
+.theme-playful main [class~="border-white/5"],
+.theme-playful main [class~="border-cyan-500/20"],
+.theme-playful main [class~="border-cyan-500/30"],
+.theme-playful main [class~="border-cyan-400/10"],
+.theme-playful main [class~="border-cyan-400/15"] {
+    border-color: #d7cdbc !important;
+}
+
+.theme-playful main [class~="text-white"],
+.theme-playful main [class~="text-slate-100"],
+.theme-playful main [class~="text-slate-200"] {
+    color: #223f35 !important;
+}
+
+.theme-playful main [class~="text-slate-300"],
+.theme-playful main [class~="text-slate-400"],
+.theme-playful main [class~="text-slate-500"] {
+    color: #6d746f !important;
+}
+
+.theme-playful main [class~="text-slate-950"],
+.theme-playful main [class~="text-slate-900"],
+.theme-playful main [class~="text-slate-800"] {
+    color: #223f35 !important;
+}
+
+.theme-playful main [class~="text-cyan-200"],
+.theme-playful main [class~="text-cyan-300"],
+.theme-playful main [class~="text-cyan-400"] {
+    color: #2f5d50 !important;
+}
+
+.theme-playful main [class~="text-fuchsia-300"],
+.theme-playful main [class~="text-fuchsia-400"],
+.theme-playful main [class~="text-purple-400"] {
+    color: #6d5f44 !important;
+}
+
+.theme-playful main [class~="text-emerald-200"],
+.theme-playful main [class~="text-emerald-300"],
+.theme-playful main [class~="text-emerald-400"],
+.theme-playful main [class~="text-green-600"] {
+    color: #2f6f4e !important;
+}
+
+.theme-playful main [class~="text-red-200"],
+.theme-playful main [class~="text-red-300"],
+.theme-playful main [class~="text-red-400"],
+.theme-playful main [class~="text-red-600"],
+.theme-playful main [class~="text-rose-500"] {
+    color: #9f2f34 !important;
+}
+
+.theme-playful main [class~="text-orange-300"],
+.theme-playful main [class~="text-orange-400"],
+.theme-playful main [class~="text-amber-300"],
+.theme-playful main [class~="text-amber-400"] {
+    color: #7a5518 !important;
+}
+
+.theme-playful main a[class~="text-white"],
+.theme-playful main button[class~="text-white"],
+.theme-playful main [class*="bg-gradient-to-"][class~="text-white"],
+.theme-playful main [class~="bg-cyan-600"][class~="text-white"],
+.theme-playful main [class~="bg-cyan-500"][class~="text-white"],
+.theme-playful main [class~="bg-red-500"][class~="text-white"] {
+    color: #ffffff !important;
+}
+
+.theme-playful main a[class~="bg-cyan-400"],
+.theme-playful main a[class~="bg-cyan-500"],
+.theme-playful main a[class~="bg-cyan-600"],
+.theme-playful main button[class~="bg-cyan-400"],
+.theme-playful main button[class~="bg-cyan-500"],
+.theme-playful main button[class~="bg-cyan-600"],
+.theme-playful main a[class*="bg-gradient-to-"],
+.theme-playful main button[class*="bg-gradient-to-"] {
+    color: #f8f2e7 !important;
+}
+
+.theme-playful main a[class~="bg-cyan-400"] *,
+.theme-playful main a[class~="bg-cyan-500"] *,
+.theme-playful main a[class~="bg-cyan-600"] *,
+.theme-playful main button[class~="bg-cyan-400"] *,
+.theme-playful main button[class~="bg-cyan-500"] *,
+.theme-playful main button[class~="bg-cyan-600"] *,
+.theme-playful main a[class*="bg-gradient-to-"] *,
+.theme-playful main button[class*="bg-gradient-to-"] * {
+    color: inherit !important;
+}
+
+.theme-playful main [class~="bg-cyan-600"],
+.theme-playful main [class~="bg-cyan-500"],
+.theme-playful main [class~="bg-cyan-400"] {
+    background-color: #223f35 !important;
+}
+
+.theme-playful main [class~="from-cyan-500"],
+.theme-playful main [class~="from-cyan-400"] {
+    --tw-gradient-from: #223f35 var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: rgb(34 63 53 / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.theme-playful main [class~="to-fuchsia-500"],
+.theme-playful main [class~="to-purple-600"] {
+    --tw-gradient-to: #4a7467 var(--tw-gradient-to-position) !important;
+}
+
+.theme-playful main [class~="from-slate-900"],
+.theme-playful main [class~="from-slate-800"] {
+    --tw-gradient-from: #efe8db var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: rgb(239 232 219 / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.theme-playful main [class~="to-slate-900"],
+.theme-playful main [class~="to-slate-800"] {
+    --tw-gradient-to: #e4d9c8 var(--tw-gradient-to-position) !important;
+}
+
+.theme-playful main [class~="bg-emerald-500/10"],
+.theme-playful main [class~="bg-emerald-500/20"] {
+    background-color: #dce8d7 !important;
+}
+
+.theme-playful main [class~="bg-red-500/10"],
+.theme-playful main [class~="bg-red-500/20"],
+.theme-playful main [class~="bg-rose-50"] {
+    background-color: #efd8d4 !important;
+}
+
+.theme-playful main [class~="bg-orange-500/10"],
+.theme-playful main [class~="bg-amber-300"],
+.theme-playful main [class~="bg-amber-400"] {
+    background-color: #eadcc0 !important;
+}
+
+.theme-playful main input,
+.theme-playful main select,
+.theme-playful main textarea {
+    background-color: #f3ecdf !important;
+    border-color: #cfc2ad !important;
+    color: #223f35 !important;
+}
+
+.theme-playful main input::placeholder,
+.theme-playful main textarea::placeholder {
+    color: #81786b !important;
+}
+
+.theme-playful main table thead {
+    background-color: #e1d6c4 !important;
+    color: #4c5a53 !important;
+}
+
+.theme-playful main table tbody tr {
+    border-color: rgba(86, 74, 57, 0.12) !important;
+}
+
+.theme-playful main [class*="blur-[120px]"],
+.theme-playful main [class*="blur-[100px]"],
+.theme-playful main [class*="blur-[180px]"] {
+    opacity: 0.08 !important;
+}
+
+.theme-playful main [class*="shadow-cyan"],
+.theme-playful main [class*="shadow-sky"],
+.theme-playful main [class*="shadow-fuchsia"] {
+    --tw-shadow-color: rgba(61, 52, 42, 0.14) !important;
+    --tw-shadow: var(--tw-shadow-colored) !important;
+}
+
+.theme-playful main [class~="animate-pulse"] {
+    animation: none !important;
+}
+
+/* Contrast and interaction pass for admin, teacher, and student workspaces. */
+.theme-playful main h1,
+.theme-playful main h2,
+.theme-playful main h3,
+.theme-playful main h4,
+.theme-playful main strong {
+    color: #1f342d;
+}
+
+.theme-playful main p,
+.theme-playful main td,
+.theme-playful main li,
+.theme-playful main label {
+    color: #34463f;
+}
+
+.theme-playful main a[class~="text-cyan-300"],
+.theme-playful main a[class~="text-cyan-400"],
+.theme-playful main a[class~="text-emerald-300"],
+.theme-playful main a[class~="text-fuchsia-300"] {
+    color: #284f45 !important;
+    text-decoration-color: rgba(40, 79, 69, 0.28);
+}
+
+.theme-playful main a[class~="text-cyan-300"]:hover,
+.theme-playful main a[class~="text-cyan-400"]:hover,
+.theme-playful main a[class~="text-emerald-300"]:hover,
+.theme-playful main a[class~="text-fuchsia-300"]:hover,
+.theme-playful main [class~="hover:text-cyan-200"]:hover,
+.theme-playful main [class~="hover:text-cyan-300"]:hover,
+.theme-playful main [class~="hover:text-cyan-400"]:hover,
+.theme-playful main [class~="hover:text-white"]:hover {
+    color: #172b24 !important;
+}
+
+.theme-playful main a[class~="bg-cyan-400"],
+.theme-playful main a[class~="bg-cyan-500"],
+.theme-playful main a[class~="bg-cyan-600"],
+.theme-playful main button[class~="bg-cyan-400"],
+.theme-playful main button[class~="bg-cyan-500"],
+.theme-playful main button[class~="bg-cyan-600"],
+.theme-playful main a[class*="bg-gradient-to-"],
+.theme-playful main button[class*="bg-gradient-to-"] {
+    background: #223f35 !important;
+    border-color: #223f35 !important;
+    color: #f8f2e7 !important;
+}
+
+.theme-playful main a[class~="bg-emerald-400"],
+.theme-playful main a[class~="bg-emerald-500"],
+.theme-playful main button[class~="bg-emerald-400"],
+.theme-playful main button[class~="bg-emerald-500"] {
+    background: #2f6f4e !important;
+    border-color: #2f6f4e !important;
+    color: #f8f2e7 !important;
+}
+
+.theme-playful main a[class~="bg-yellow-300"],
+.theme-playful main a[class~="bg-yellow-400"],
+.theme-playful main button[class~="bg-yellow-300"],
+.theme-playful main button[class~="bg-yellow-400"],
+.theme-playful main [class~="bg-yellow-400"] {
+    background: #cfe66a !important;
+    border-color: #b8cf56 !important;
+    color: #223f35 !important;
+}
+
+.theme-playful main a[class~="bg-cyan-400"]:hover,
+.theme-playful main a[class~="bg-cyan-500"]:hover,
+.theme-playful main a[class~="bg-cyan-600"]:hover,
+.theme-playful main button[class~="bg-cyan-400"]:hover,
+.theme-playful main button[class~="bg-cyan-500"]:hover,
+.theme-playful main button[class~="bg-cyan-600"]:hover,
+.theme-playful main a[class*="bg-gradient-to-"]:hover,
+.theme-playful main button[class*="bg-gradient-to-"]:hover {
+    background: #2d5749 !important;
+    border-color: #2d5749 !important;
+    color: #ffffff !important;
+}
+
+.theme-playful main a[class~="bg-emerald-400"]:hover,
+.theme-playful main a[class~="bg-emerald-500"]:hover,
+.theme-playful main button[class~="bg-emerald-400"]:hover,
+.theme-playful main button[class~="bg-emerald-500"]:hover {
+    background: #285f43 !important;
+    border-color: #285f43 !important;
+    color: #ffffff !important;
+}
+
+.theme-playful main button[class~="bg-red-500"],
+.theme-playful main button[class~="bg-red-600"],
+.theme-playful main button[class~="bg-rose-500"],
+.theme-playful main button[class*="hover:bg-red-500"]:hover,
+.theme-playful main button[class*="hover:bg-red-600"]:hover,
+.theme-playful main button[class*="hover:bg-rose-500"]:hover {
+    background: #9f2f34 !important;
+    border-color: #9f2f34 !important;
+    color: #ffffff !important;
+}
+
+.theme-playful main a[class~="bg-white/5"],
+.theme-playful main button[class~="bg-white/5"],
+.theme-playful main a[class~="bg-transparent"],
+.theme-playful main button[class~="bg-transparent"],
+.theme-playful main [class~="bg-white/[0.03]"],
+.theme-playful main [class~="bg-white/[0.04]"] {
+    background-color: #e6dccb !important;
+    border-color: #cfc2ad !important;
+    color: #223f35 !important;
+}
+
+.theme-playful main a[class~="bg-white/5"]:hover,
+.theme-playful main button[class~="bg-white/5"]:hover,
+.theme-playful main a[class~="bg-transparent"]:hover,
+.theme-playful main button[class~="bg-transparent"]:hover,
+.theme-playful main [class*="hover:bg-white/"]:hover,
+.theme-playful main [class*="hover:bg-cyan-"]:hover,
+.theme-playful main [class*="hover:bg-emerald-"]:hover,
+.theme-playful main [class*="hover:bg-fuchsia-"]:hover,
+.theme-playful main [class*="hover:bg-slate-"]:hover {
+    background-color: #d8cfbd !important;
+    border-color: #a98f6b !important;
+    color: #172b24 !important;
+}
+
+.theme-playful main [class*="hover:border-cyan-"]:hover,
+.theme-playful main [class*="hover:border-emerald-"]:hover,
+.theme-playful main [class*="hover:border-fuchsia-"]:hover {
+    border-color: #2d5749 !important;
+}
+
+.theme-playful main [class~="border-slate-600"],
+.theme-playful main [class~="border-slate-700"],
+.theme-playful main [class~="border-slate-800"] {
+    border-color: #9f917e !important;
+}
+
+.theme-playful main [class~="bg-cyan-500/10"],
+.theme-playful main [class~="bg-cyan-400/10"],
+.theme-playful main [class~="bg-emerald-500/10"],
+.theme-playful main [class~="bg-emerald-500/20"],
+.theme-playful main [class~="bg-fuchsia-500/10"],
+.theme-playful main [class~="bg-fuchsia-400/10"],
+.theme-playful main [class~="bg-orange-500/10"] {
+    border-color: #bfb19c !important;
+}
+
+.theme-playful main span[class*="bg-cyan"],
+.theme-playful main span[class*="bg-emerald"],
+.theme-playful main span[class*="bg-fuchsia"],
+.theme-playful main span[class*="bg-orange"] {
+    color: #223f35 !important;
+}
+
+.theme-playful main span[class*="bg-red"],
+.theme-playful main span[class*="bg-rose"] {
+    color: #8f282d !important;
+}
+
+.theme-playful main table {
+    color: #283a34 !important;
+}
+
+.theme-playful main table th {
+    color: #4c5a53 !important;
+    border-color: rgba(86, 74, 57, 0.16) !important;
+}
+
+.theme-playful main table td {
+    color: #34463f !important;
+}
+
+.theme-playful main table td p,
+.theme-playful main table td span:not([class*="bg-"]) {
+    color: inherit !important;
+}
+
+.theme-playful main table tbody tr:hover {
+    background-color: rgba(216, 207, 189, 0.78) !important;
+}
+
+.theme-playful main input:focus,
+.theme-playful main select:focus,
+.theme-playful main textarea:focus {
+    border-color: #223f35 !important;
+    box-shadow: 0 0 0 3px rgba(34, 63, 53, 0.14) !important;
+    outline: none !important;
+}
+
+.theme-playful main label:has(input[type="radio"]:checked) {
+    background-color: #dce8d7 !important;
+    border-color: #223f35 !important;
+}
+
+.theme-playful main label:has(input[type="radio"]:checked) p {
+    color: #1f342d !important;
+}
+
+.theme-playful main label:has(input[type="radio"]:checked) div[class*="w-10"],
+.theme-playful main input[type="radio"]:checked + span {
+    background-color: #223f35 !important;
+    border-color: #223f35 !important;
+    color: #f8f2e7 !important;
+}
+
+.theme-playful main label:has(input[type="radio"]):hover {
+    background-color: #e0d7c7 !important;
+    border-color: #8f7b5f !important;
+}
+
+.theme-playful main svg {
+    color: currentColor;
+}
+
+.theme-playful main a[class~="bg-cyan-400"]:hover,
+.theme-playful main a[class~="bg-cyan-500"]:hover,
+.theme-playful main a[class~="bg-cyan-600"]:hover,
+.theme-playful main button[class~="bg-cyan-400"]:hover,
+.theme-playful main button[class~="bg-cyan-500"]:hover,
+.theme-playful main button[class~="bg-cyan-600"]:hover,
+.theme-playful main a[class*="bg-gradient-to-"]:hover,
+.theme-playful main button[class*="bg-gradient-to-"]:hover {
+    background: #2d5749 !important;
+    border-color: #2d5749 !important;
+    color: #ffffff !important;
+}
+
+.theme-playful main a[class~="bg-emerald-400"]:hover,
+.theme-playful main a[class~="bg-emerald-500"]:hover,
+.theme-playful main button[class~="bg-emerald-400"]:hover,
+.theme-playful main button[class~="bg-emerald-500"]:hover {
+    background: #285f43 !important;
+    border-color: #285f43 !important;
+    color: #ffffff !important;
+}
+
+.theme-playful main a[class~="bg-cyan-400"]:hover *,
+.theme-playful main a[class~="bg-cyan-500"]:hover *,
+.theme-playful main a[class~="bg-cyan-600"]:hover *,
+.theme-playful main button[class~="bg-cyan-400"]:hover *,
+.theme-playful main button[class~="bg-cyan-500"]:hover *,
+.theme-playful main button[class~="bg-cyan-600"]:hover *,
+.theme-playful main a[class~="bg-emerald-400"]:hover *,
+.theme-playful main a[class~="bg-emerald-500"]:hover *,
+.theme-playful main button[class~="bg-emerald-400"]:hover *,
+.theme-playful main button[class~="bg-emerald-500"]:hover *,
+.theme-playful main a[class*="bg-gradient-to-"]:hover *,
+.theme-playful main button[class*="bg-gradient-to-"]:hover * {
+    color: inherit !important;
+}

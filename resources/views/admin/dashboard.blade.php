@@ -23,7 +23,7 @@
                     <div class="flex flex-wrap gap-3">
                         <a href="{{ route('categories.index') }}" class="inline-flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm font-black text-cyan-200 transition hover:bg-cyan-400/20">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h7"/></svg>
-                            Kategori
+                             Mapel
                         </a>
                         <a href="{{ route('questions.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-3 text-sm font-black text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-300">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M12 4v16m8-8H4"/></svg>
@@ -34,7 +34,7 @@
 
                 <div class="mt-8 grid gap-4 md:grid-cols-4">
                     <div class="rounded-lg border border-white/10 bg-white/[0.04] p-5">
-                        <p class="text-xs font-black uppercase tracking-widest text-slate-500">Kategori</p>
+                        <p class="text-xs font-black uppercase tracking-widest text-slate-500">Pelajaran</p>
                         <p class="mt-3 text-4xl font-black text-white">{{ $totalKategori }}</p>
                     </div>
                     <div class="rounded-lg border border-white/10 bg-white/[0.04] p-5">

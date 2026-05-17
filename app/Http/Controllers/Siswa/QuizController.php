@@ -257,43 +257,43 @@ class QuizController extends Controller
     {
         $score = (int) $totalSkor;
 
-        if ($score >= 2500) {
-            return $this->tierPayload('mythical_glory', 'Mythical Glory', 3, 2500, null, 'from-purple-700 via-red-600 to-yellow-400', '#facc15', '#dc2626', '#6d28d9');
+        if ($score >= 1800) {
+            return $this->tierPayload('mythical_glory', 'Mythical Glory', 3, 1900, null, 'from-purple-700 via-red-600 to-yellow-400', '#facc15', '#dc2626', '#6d28d9');
         }
 
-        if ($score >= 2000) {
-            return $this->tierPayload('mythic', 'Mythic', 2, 2000, 2500, 'from-violet-600 via-fuchsia-500 to-blue-500', '#c084fc', '#7c3aed', '#2563eb');
+        if ($score >= 1200) {
+            return $this->tierPayload('mythic', 'Mythic', 2, 1250, 1500, 'from-violet-600 via-fuchsia-500 to-blue-500', '#c084fc', '#7c3aed', '#2563eb');
         }
 
-        if ($score >= 1700) {
-            return $this->tierPayload('mythic', 'Mythic', 1, 1700, 2000, 'from-violet-600 via-fuchsia-500 to-blue-500', '#c084fc', '#7c3aed', '#2563eb');
-        }
-
-        if ($score >= 1400) {
-            return $this->tierPayload('legend', 'Legend', 3, 1400, 1700, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
-        }
-
-        if ($score >= 1100) {
-            return $this->tierPayload('legend', 'Legend', 2, 1100, 1400, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
+        if ($score >= 1000) {
+            return $this->tierPayload('mythic', 'Mythic', 1, 1000, 1250, 'from-violet-600 via-fuchsia-500 to-blue-500', '#c084fc', '#7c3aed', '#2563eb');
         }
 
         if ($score >= 800) {
-            return $this->tierPayload('legend', 'Legend', 1, 800, 1100, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
+            return $this->tierPayload('legend', 'Legend', 3, 800, 1000, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
         }
 
-        if ($score >= 600) {
-            return $this->tierPayload('epic', 'Epic', 3, 600, 800, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+        if ($score >= 650) {
+            return $this->tierPayload('legend', 'Legend', 2, 600, 800, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
         }
 
-        if ($score >= 400) {
-            return $this->tierPayload('epic', 'Epic', 2, 400, 600, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+        if ($score >= 500) {
+            return $this->tierPayload('legend', 'Legend', 1, 400, 600, 'from-amber-500 via-yellow-300 to-orange-500', '#fbbf24', '#f59e0b', '#b45309');
+        }
+
+        if ($score >= 350) {
+            return $this->tierPayload('epic', 'Epic', 3, 300, 400, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
         }
 
         if ($score >= 200) {
-            return $this->tierPayload('epic', 'Epic', 1, 200, 400, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+            return $this->tierPayload('epic', 'Epic', 2, 200, 300, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
         }
 
-        return $this->tierPayload('warrior', 'Warrior', 1, 0, 200, 'from-slate-500 via-zinc-400 to-stone-500', '#94a3b8', '#64748b', '#44403c');
+        if ($score >= 100) {
+            return $this->tierPayload('epic', 'Epic', 1, 50, 100, 'from-teal-400 via-cyan-400 to-emerald-500', '#22d3ee', '#14b8a6', '#059669');
+        }
+
+        return $this->tierPayload('warrior', 'Warrior', 1, 0, 50, 'from-slate-500 via-zinc-400 to-stone-500', '#94a3b8', '#64748b', '#44403c');
     }
 
     private function tierPayload(string $key, string $name, int $stars, int $minScore, ?int $nextScore, string $gradient, string $primary, string $secondary, string $accent): array

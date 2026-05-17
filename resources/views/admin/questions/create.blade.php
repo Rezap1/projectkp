@@ -101,7 +101,7 @@
                 <div class="sticky bottom-5 z-20 rounded-lg border border-cyan-400/20 bg-slate-950/90 p-4 shadow-2xl shadow-cyan-950/40 backdrop-blur">
                     <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-400 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-cyan-300">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="m4.5 12.75 6 6 9-13.5"/></svg>
-                        Simpan Soal ke Database
+                        Tambahkan Soal
                     </button>
                 </div>
             </form>

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\Result;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -235,13 +238,11 @@ class QuestionController extends Controller
         $validated = $request->validate([
             'nama_kategori' => ['required', 'string', 'max:255'],
             'kelas' => ['required', 'in:4,5,6'],
-            'durasi' => ['required', 'integer', 'min:1', 'max:180'],
         ]);
 
         $category->update([
             'nama_kategori' => $validated['nama_kategori'],
             'kelas' => $validated['kelas'],
-            'durasi' => $validated['durasi'],
             'slug' => $this->uniqueCategorySlug($validated['nama_kategori'], $validated['kelas'], $category->id),
         ]);
 
@@ -258,15 +259,62 @@ class QuestionController extends Controller
 
     public function results(Request $request)
     {
+        $data = $this->resultsReportData($request);
+        $resultsQuery = $data['resultsQuery'];
+        unset($data['resultsQuery']);
+
+        $data['results'] = $resultsQuery->latest()->paginate(15)->withQueryString();
+
+        return view('admin.results.index', $data);
+    }
+
+    public function resultsPdf(Request $request)
+    {
+        $data = $this->resultsReportData($request);
+        unset($data['resultsQuery']);
+
+        $studentName = $data['selectedStudent']
+            ? Str::slug($data['selectedStudent']->name)
+            : 'semua-siswa';
+        $period = Str::slug($data['printPeriod']);
+
+        $pdf = Pdf::loadView('admin.results.pdf', $data)
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download("rekap-{$studentName}-{$period}.pdf");
+    }
+
+    private function resultsReportData(Request $request): array
+    {
         $categoryIds = $this->ownedCategories()->pluck('id');
         $categories = $this->ownedCategories()->orderBy('kelas')->orderBy('nama_kategori')->get();
+        $students = User::where('role', 'siswa')
+            ->whereIn('kelas', $categories->pluck('kelas')->filter()->unique())
+            ->orderBy('kelas')
+            ->orderBy('name')
+            ->get();
+        $selectedStudent = $request->filled('student_id')
+            ? $students->firstWhere('id', (int) $request->student_id)
+            : null;
+        $monthStart = $this->reportMonthStart($request);
+        $monthEnd = $monthStart->copy()->endOfMonth();
+        $printPeriod = $monthStart->translatedFormat('F Y');
 
         $resultsQuery = Result::with(['user', 'category'])
             ->whereIn('category_id', $categoryIds)
             ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->category_id))
             ->when($request->filled('kelas'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('kelas', $request->kelas)))
             ->when($request->filled('tanggal'), fn ($query) => $query->whereDate('created_at', $request->tanggal))
-            ->when($request->filled('q'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('name', 'like', '%' . $request->q . '%')));
+            ->when($selectedStudent, fn ($query) => $query->where('user_id', $selectedStudent->id))
+            ->when(!$selectedStudent && $request->filled('q'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('name', 'like', '%' . $request->q . '%')));
+
+        $monthlyQuery = Result::with(['user', 'category'])
+            ->whereIn('category_id', $categoryIds)
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->category_id))
+            ->when($request->filled('kelas'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('kelas', $request->kelas)))
+            ->when($selectedStudent, fn ($query) => $query->where('user_id', $selectedStudent->id))
+            ->when(!$selectedStudent && $request->filled('q'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('name', 'like', '%' . $request->q . '%')));
 
         $summary = [
             'total' => (clone $resultsQuery)->count(),
@@ -275,9 +323,68 @@ class QuestionController extends Controller
             'remedial' => (clone $resultsQuery)->where('skor', '<', 75)->count(),
         ];
 
-        $results = $resultsQuery->latest()->paginate(15)->withQueryString();
+        $monthlySummary = [
+            'total' => (clone $monthlyQuery)->count(),
+            'avg' => round((clone $monthlyQuery)->avg('skor') ?? 0, 1),
+            'passed' => (clone $monthlyQuery)->where('skor', '>=', 75)->count(),
+            'remedial' => (clone $monthlyQuery)->where('skor', '<', 75)->count(),
+            'students' => (clone $monthlyQuery)->distinct('user_id')->count('user_id'),
+            'highest' => (clone $monthlyQuery)->max('skor') ?? 0,
+        ];
 
-        return view('admin.results.index', compact('categories', 'results', 'summary'));
+        $monthlyRanking = Result::with('user')
+            ->whereIn('category_id', $categoryIds)
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->category_id))
+            ->when($request->filled('kelas') || $selectedStudent, fn ($query) => $query->whereHas('user', fn ($user) => $user->where('kelas', $request->kelas ?: $selectedStudent->kelas)))
+            ->when(!$selectedStudent && $request->filled('q'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('name', 'like', '%' . $request->q . '%')))
+            ->selectRaw('user_id, SUM(skor) as total_skor, AVG(skor) as rata_skor, COUNT(*) as total_pengerjaan, MAX(skor) as skor_tertinggi')
+            ->groupBy('user_id')
+            ->orderByDesc('total_skor')
+            ->orderByDesc('rata_skor')
+            ->get()
+            ->map(function ($rank, $index) {
+                $rank->tier = $this->getTierData($rank->total_skor);
+                $rank->position = $index + 1;
+
+                return $rank;
+            });
+
+        $selectedStudentRank = $selectedStudent
+            ? $monthlyRanking->firstWhere('user_id', $selectedStudent->id)
+            : null;
+
+        $categoryReport = Result::with('category')
+            ->whereIn('category_id', $categoryIds)
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->category_id))
+            ->when($request->filled('kelas'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('kelas', $request->kelas)))
+            ->when($selectedStudent, fn ($query) => $query->where('user_id', $selectedStudent->id))
+            ->when(!$selectedStudent && $request->filled('q'), fn ($query) => $query->whereHas('user', fn ($user) => $user->where('name', 'like', '%' . $request->q . '%')))
+            ->selectRaw('category_id, COUNT(*) as total_pengerjaan, AVG(skor) as rata_skor, MAX(skor) as skor_tertinggi')
+            ->groupBy('category_id')
+            ->orderByDesc('rata_skor')
+            ->get();
+
+        $monthlyResults = (clone $monthlyQuery)->latest()->get();
+
+        $logoPath = public_path('img/logo.png');
+
+        return [
+            'categories' => $categories,
+            'students' => $students,
+            'selectedStudent' => $selectedStudent,
+            'selectedStudentRank' => $selectedStudentRank,
+            'resultsQuery' => $resultsQuery,
+            'summary' => $summary,
+            'printPeriod' => $printPeriod,
+            'monthlySummary' => $monthlySummary,
+            'monthlyRanking' => $monthlyRanking,
+            'categoryReport' => $categoryReport,
+            'monthlyResults' => $monthlyResults,
+            'logoPath' => $logoPath,
+            'logoSrc' => extension_loaded('gd') && file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : null,
+        ];
     }
 
     public function destroyResult(Result $result)
@@ -339,5 +446,54 @@ class QuestionController extends Controller
         }
 
         return $slug;
+    }
+
+    private function reportMonthStart(Request $request): Carbon
+    {
+        if ($request->filled('bulan') && preg_match('/^\d{4}-\d{2}$/', $request->bulan)) {
+            try {
+                return Carbon::createFromFormat('Y-m', $request->bulan)->startOfMonth();
+            } catch (\Throwable) {
+                return now()->startOfMonth();
+            }
+        }
+
+        return now()->startOfMonth();
+    }
+
+    private function getTierData($totalSkor): array
+    {
+        $score = (int) $totalSkor;
+
+        if ($score >= 2500) {
+            return $this->tierPayload('mythical_glory', 'Mythical Glory', 3, '#facc15', '#dc2626', '#6d28d9');
+        }
+
+        if ($score >= 1700) {
+            return $this->tierPayload('mythic', 'Mythic', $score >= 2000 ? 2 : 1, '#c084fc', '#7c3aed', '#2563eb');
+        }
+
+        if ($score >= 800) {
+            return $this->tierPayload('legend', 'Legend', $score >= 1400 ? 3 : ($score >= 1100 ? 2 : 1), '#fbbf24', '#f59e0b', '#b45309');
+        }
+
+        if ($score >= 50) {
+            return $this->tierPayload('epic', 'Epic', $score >= 200 ? 3 : ($score >= 100 ? 2 : 1), '#22d3ee', '#14b8a6', '#059669');
+        }
+
+        return $this->tierPayload('warrior', 'Warrior', 1, '#94a3b8', '#64748b', '#44403c');
+    }
+
+    private function tierPayload(string $key, string $name, int $stars, string $primary, string $secondary, string $accent): array
+    {
+        return [
+            'key' => $key,
+            'name' => $name,
+            'stars' => $stars,
+            'label' => $name . ' ' . str_repeat('*', $stars),
+            'primary' => $primary,
+            'secondary' => $secondary,
+            'accent' => $accent,
+        ];
     }
 }
